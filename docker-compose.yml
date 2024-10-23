@@ -1,0 +1,48 @@
+services:
+  bot:
+    build: ./src
+    restart: always
+    networks:
+      - yet_another_network
+    depends_on:
+      - postgres_main
+      - redis_main
+
+    env_file: ./dockerenvs/bot.env
+    container_name: BOT
+  
+
+  postgres_main:
+    image: postgres:13.16-bookworm
+    restart: always
+    networks:
+      - yet_another_network
+    env_file:
+      - ./dockerenvs/postgres.env
+    container_name: PG_MAIN
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis_main:
+    image: redis:8.0-M01
+    restart: always
+    networks:
+      - yet_another_network
+    env_file:
+      - ./dockerenvs/redis.env
+    container_name: REDIS_MAIN
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  yet_another_network:
+   driver: bridge
