@@ -19,7 +19,7 @@ async def hook_send(request: Request):
     return JSONResponse(status_code=200, content={"response": response.json()})
 
 if __name__ == '__main__':
-    uvicorn.run("hook.proxy_server:app",
+    uvicorn.run("proxy_server:app",
                 host="0.0.0.0",
                 port=443,
                 reload=True,
