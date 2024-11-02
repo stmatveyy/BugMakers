@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 import uvicorn
-from authorizations.src.authorization_services import todoist, yandex
-from authorizations.src.hackathon_utils import (
+from authorization_services import todoist, yandex
+from hackathon_utils import (
     save_authorization_data_and_return_response,
 )
 from authorizations.src.settings import base_hackathon_settings, todoist_auth_settings
