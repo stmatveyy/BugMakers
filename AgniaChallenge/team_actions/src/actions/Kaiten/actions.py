@@ -16,8 +16,6 @@ BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
 
 
-
-
 class Space(BaseModel):
 
     title: SpaceTitle
@@ -32,7 +30,7 @@ class Space(BaseModel):
         "externel_id"
     ],
     description="Creates new Space object")
-def create_task(title: SpaceTitle, externel_id: Optional[Id] = None) -> Space:
+def create_task(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
     response = rq.post(
         "https://example.kaiten.ru/api/latest/spaces",
@@ -41,7 +39,7 @@ def create_task(title: SpaceTitle, externel_id: Optional[Id] = None) -> Space:
         },
         json = {
             "title": title,
-            "externel_id": externel_id
+            "externel_id": external_id
         }
     )
 
