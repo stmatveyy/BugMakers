@@ -5,11 +5,11 @@ import uvicorn
 
 app = FastAPI()
 
-PROXY_URL = "http://158.160.10.254:9000/proxy/recieve" 
+PROXY_URL = "http://158.160.10.254:9000/hook/recieve" 
 
 TOKEN = "7892983145:AAHaB6Oy_qcQcyP5CJVlDlOl0TwNo0RVq6c"
 
-@app.post(f"/{TOKEN}/")
+@app.post(f"/hook/post")
 async def hook_send(request: Request):
     update = await request.json()
 
