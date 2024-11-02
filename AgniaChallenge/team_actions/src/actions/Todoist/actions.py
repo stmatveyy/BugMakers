@@ -22,6 +22,7 @@ DueString = Annotated[str, Field(description="Due date in English", example="tom
 DueLang = Annotated[str, Field(pattern="^[a-z]{2}$", default="en")]
 DurationUnit = Literal["minute", "day"]
 Priority = Annotated[int, Field(ge=1, le=4)]
+ProjectId = str
 
 
 # Определяем модели данных для выходных параметров
@@ -57,6 +58,20 @@ class Task(BaseModel):
     due: Optional[Due]
     url: HttpUrl
     duration: Optional[Duration]
+
+class Project(BaseModel):
+    name: str
+    parent_id: Optional[str]
+    color: Optional[str]
+    is_favorite:Optional[bool]
+    view_style: Optional[str]
+
+class Sections(BaseModel):
+    id: Id
+    project_id: ProjectId
+    order: Annotated[int, Field(ge=1)]
+    name: str
+
 
 
 @register_action(
@@ -110,6 +125,84 @@ def create_task(
             "due_datetime": due_datetime,
             "duration": duration,
             "duration_unit": duration_unit,
+        },
+    )
+
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+@register_action(
+    system_type="task_tracker",
+    include_in_plan=True, 
+    signature="(name: str, parent_id: Optional[str] = None, color: Optional[str] = None, is_favorite: Optional[bool] = None, view_style: Optional[str] = None) -> Project",
+    arguments=[
+        "name",
+        "parent_id",
+        "color",
+        "is_favorite",
+        "view_style",
+    ],
+    description="Creates a new project",
+)
+def create_new_project(
+    name: str,
+    parent_id: Optional[str] = None,
+    color: Optional[str] = None,
+    is_favorite: Optional[bool] = None,
+    view_style: Optional[str] = None,
+) -> Project:
+    # Логика вызова API Todoist для создания задачи
+    response = requests.post(
+        "https://api.todoist.com/rest/v2/projects",
+        headers={"Authorization": f"Bearer {authorization_data['Todoist']}"},
+        json={
+            "name": name,
+            "parent_id": parent_id,
+            "color": color,
+            "is_favorite": is_favorite,
+            "view_style": view_style,
+        },
+    )
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+
+class Sections(BaseModel):
+    id: Id
+    project_id: ProjectId
+    order: Annotated[int, Field(ge=1)]
+    name: str
+
+
+
+@register_action(
+    system_type="task_tracker",
+    include_in_plan=True, 
+    signature="(id: Id, project_id: str, order: Annotated[int, Field(ge=1)] = None, name: str = None) -> Sections",
+    arguments=[
+        "id",
+        "project_id",
+        "order",
+        "name",
+    ],
+    description="Creates a new section",
+)
+def create_new_section(
+    id: Id,
+    project_id: str,
+    name: str,
+    order: Annotated[int, Field(ge=1)] = None
+) -> Sections:
+    response = requests.post(
+        "https://api.todoist.com/rest/v2/sections",
+        headers={"Authorization": f"Bearer {authorization_data['Todoist']}"},
+        json={
+            "id": id,
+            "project_id": project_id,
+            "order": order,
+            "name": name,
         },
     )
     response.raise_for_status()

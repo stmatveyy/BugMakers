@@ -7,7 +7,7 @@ from team_actions.src.registration import register_action
 
 
 
-Id = Annotated[int, Field(description="Any ID represented as a string.")] 
+Id = Annotated[int | str, Field(description="Any ID represented as a string.")] 
 SpaceTitle = Annotated[str, Field(descripton="A well-crafted space title.")]
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")] 

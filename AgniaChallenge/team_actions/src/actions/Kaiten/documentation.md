@@ -12,7 +12,7 @@ Date = Annotated[str, Fiels(description="A date when an entity was created")]
 # Models definition
 
 class Space(BaseModel):
-    id: Id
+    id: Id | str
     title: SpaceTitle
     created: Date
     updated: Date
