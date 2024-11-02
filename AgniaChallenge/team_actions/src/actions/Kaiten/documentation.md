@@ -51,3 +51,54 @@ class BoardLanes(BaseModel):
 class Column(BaseModel):
     id: Id
     title: str
+    updated: str
+    type: Literal[1, 2, 3]
+    board_id: Id
+    column_id: None
+    external_id: Optional[str, None]
+
+
+class User(BaseModel):
+    id: Id
+    full_name: str
+    username: str
+    updated: str
+    created: str
+    activated: bool
+    company_id: int
+    default_space_id: int
+    role: Literal[1, 2, 3]
+    external: bool
+
+
+class UserRole(BaseModel):
+    name: str
+    company_id: int
+    created: str
+    updated: str
+    updated: int
+    uid: str
+
+
+class Card(BaseModel):
+    id: Id
+    title: str
+    description: str
+    asap: bool
+    created: str
+    updated: str
+    due_date: Optional[str, None]
+    sort_order: int
+    state: Literal[1, 2, 3]
+    condition: Literal[1, 2]
+    expires_later: bool
+    parents_count: int
+    children_count: int
+    children_done: int
+    blocking_card: bool
+    blocked: bool
+    board_id: Id
+    column_id: Id
+    lane_id: Id
+    public: bool
+    cardRole: int
