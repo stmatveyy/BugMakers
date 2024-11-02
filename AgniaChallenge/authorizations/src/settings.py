@@ -2,8 +2,12 @@ from pydantic_settings import BaseSettings
 
 
 class BaseHackathonSettings(BaseSettings):
-    user_token_from_tg_bot: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjExNDJlNjMtMjFjNS00MTY3LWEzMWQtM2M1Yjk2NzIzNTlhIiwiZXhwIjoxNzMwNTc1NTE1Ljc0OTgzNCwiaXNzIjoiYmFja2VuZDphY2Nlc3MtdG9rZW4ifQ.05153zSJGCxY-FlJCZmRervg-y5Vwe6fgnKMgf5W7zI"
-    save_auth_data_endpoint: str = "https://aes-agniachallenge-case.olymp.innopolis.university/save-authorization-data"
+    user_token_from_tg_bot: str = (
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjExNDJlNjMtMjFjNS00MTY3LWEzMWQtM2M1Yjk2NzIzNTlhIiwiZXhwIjoxNzMwNTc1NTE1Ljc0OTgzNCwiaXNzIjoiYmFja2VuZDphY2Nlc3MtdG9rZW4ifQ.05153zSJGCxY-FlJCZmRervg-y5Vwe6fgnKMgf5W7zI"
+    )
+    save_auth_data_endpoint: str = (
+        "https://aes-agniachallenge-case.olymp.innopolis.university/save-authorization-data"
+    )
 
 
 class TodoistAuthSettings(BaseSettings):
@@ -15,11 +19,13 @@ class TodoistAuthSettings(BaseSettings):
     todoist_state: str = "some_secret_state"
     todoist_client_secret: str = "96e9b8009985409dae8b3cdad4ea0e9c"
 
+
 class YandexAuthSettings(BaseSettings):
     yandex_oauth_api_url: str = "https://oauth.yandex.ru/authorize"
     yandex_client_id: str = "97342af268a64520889612d95ad90e4b"
     yandex_client_secret: str = "7693f1594df84217adb2a62ecc785e30"
     yandex_redirect_uri: str = "https://mlbuy.ru:443"
+
 
 base_hackathon_settings = BaseHackathonSettings()
 todoist_auth_settings = TodoistAuthSettings()
