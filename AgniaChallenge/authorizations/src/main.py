@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
-
+import uvicorn
 from authorizations.src.authorization_services import todoist, yandex
 from authorizations.src.hackathon_utils import (
     save_authorization_data_and_return_response,
@@ -65,6 +65,16 @@ def get_yandex_token(
     return save_authorization_data_and_return_response(
         authorization_token, system_name="Yandex"
     )
+
+if __name__ == '__main__':
+    uvicorn.run("proxy_server:app",
+                host="0.0.0.0",
+                port=9000,
+                reload=True,
+                ssl_keyfile="/etc/letsencrypt/live/mlbuy.ru/privkey.pem", 
+                ssl_certfile="/etc/letsencrypt/live/mlbuy.ru/fullchain.pem"
+                )
+
 
 
 
