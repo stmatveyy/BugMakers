@@ -43,16 +43,14 @@ def get_todoist_token(
         authorization_token, system_name="Todoist"
     )
 
+
 @app.get("/yandex/authorize")
 def authorize_in_yandex():
     return {"url": yandex.authorize()}
 
 
 @app.get("/yandex/get-token")
-def get_yandex_token(
-    code: str = None,
-    error: str = None
-):
+def get_yandex_token(code: str = None, error: str = None):
     if error == "invalid_application_status":
         raise HTTPException(status_code=500, detail="Invalid application status")
     elif error == "invalid_scope":
@@ -66,16 +64,13 @@ def get_yandex_token(
         authorization_token, system_name="Yandex"
     )
 
-if __name__ == '__main__':
-    uvicorn.run("proxy_server:app",
-                host="0.0.0.0",
-                port=9000,
-                reload=True,
-                ssl_keyfile="/etc/letsencrypt/live/mlbuy.ru/privkey.pem", 
-                ssl_certfile="/etc/letsencrypt/live/mlbuy.ru/fullchain.pem"
-                )
 
-
-
-
-
+if __name__ == "__main__":
+    uvicorn.run(
+        "proxy_server:app",
+        host="0.0.0.0",
+        port=9000,
+        reload=True,
+        ssl_keyfile="/etc/letsencrypt/live/mlbuy.ru/privkey.pem",
+        ssl_certfile="/etc/letsencrypt/live/mlbuy.ru/fullchain.pem",
+    )

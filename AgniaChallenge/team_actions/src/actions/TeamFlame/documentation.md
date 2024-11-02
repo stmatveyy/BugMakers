@@ -1,5 +1,5 @@
 # TypeHints Definition
-Id = Annotated[str, Field(description="Any ID represented as a string.")]
+
 TaskName = Annotated[str, Field(description="A well-crafted task name.")]
 MongoID = Annotated[str, Field(regex="^[0-9a-f]{24}$")]
 PriorityChoice = Annotated[str, Field(regex="^(low|middle|high)$")]

@@ -14,7 +14,7 @@ def authorize():
 
 
 def callback(code: str = None, error: str = None):
- 
+
     token_params = {
         "client_id": yandex_auth_settings.yandex_client_id,
         "client_secret": yandex_auth_settings.yandex_client_secret,
@@ -25,12 +25,12 @@ def callback(code: str = None, error: str = None):
         response = requests.post(
             yandex_auth_settings.yandex_oauth_api_url, data=token_params
         )
-        
+
         response.raise_for_status()
         response_data = response.json()
 
         return response_data["access_token"]
-    
+
     except requests.HTTPError:
         error_data = response.json()
         # This could happen if the code is used more than once, or if it has expired.
@@ -48,4 +48,3 @@ def callback(code: str = None, error: str = None):
             status_code=500,
             detail=f"Failed to communicate with Todoist: {str(req_err)}",
         )
-

@@ -33,7 +33,7 @@ def callback(code: str = None, state: str = None, error: str = None):
         response_data = response.json()
 
         return response_data["access_token"]
-    
+
     except requests.HTTPError:
         error_data = response.json()
         # This could happen if the code is used more than once, or if it has expired.
