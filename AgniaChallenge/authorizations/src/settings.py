@@ -16,10 +16,10 @@ class TodoistAuthSettings(BaseSettings):
     todoist_client_secret: str = "96e9b8009985409dae8b3cdad4ea0e9c"
 
 class YandexAuthSettings(BaseSettings):
-    yandex_oauth_api_url = "https://oauth.yandex.ru/authorize"
-    yandex_client_id = "97342af268a64520889612d95ad90e4b"
-    yandex_client_secret = "7693f1594df84217adb2a62ecc785e30"
-    yandex_redirect_uri = "https://mlbuy.ru:443"
+    yandex_oauth_api_url: str = "https://oauth.yandex.ru/authorize"
+    yandex_client_id: str = "97342af268a64520889612d95ad90e4b"
+    yandex_client_secret: str = "7693f1594df84217adb2a62ecc785e30"
+    yandex_redirect_uri: str = "https://mlbuy.ru:443"
 
 base_hackathon_settings = BaseHackathonSettings()
 todoist_auth_settings = TodoistAuthSettings()
