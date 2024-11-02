@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 
-from authorizations.src.authorization_services import todoist
+from authorizations.src.authorization_services import todoist, yandex
 from authorizations.src.hackathon_utils import (
     save_authorization_data_and_return_response,
 )
@@ -42,3 +42,30 @@ def get_todoist_token(
     return save_authorization_data_and_return_response(
         authorization_token, system_name="Todoist"
     )
+
+@app.get("/yandex/authorize")
+def authorize_in_yandex():
+    return {"url": yandex.authorize()}
+
+
+@app.get("/yandex/get-token")
+def get_yandex_token(
+    code: str = None,
+    error: str = None
+):
+    if error == "invalid_application_status":
+        raise HTTPException(status_code=500, detail="Invalid application status")
+    elif error == "invalid_scope":
+        raise HTTPException(status_code=400, detail="Invalid scope")
+    elif error == "access_denied":
+        raise HTTPException(status_code=403, detail="User denied authorization")
+
+    authorization_token = yandex.callback(code=code, error=error)
+
+    return save_authorization_data_and_return_response(
+        authorization_token, system_name="Yandex"
+    )
+
+
+
+

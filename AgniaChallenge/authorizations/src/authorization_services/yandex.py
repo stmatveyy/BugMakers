@@ -1,34 +1,31 @@
 import requests
 from fastapi import HTTPException
 
-from authorizations.src.settings import todoist_auth_settings
+from authorizations.src.settings import todoist_auth_settings, yandex_auth_settings
 
 
 def authorize():
     authorization_url = (
-        f"{todoist_auth_settings.todoist_oauth_api_url}?"
-        f"client_id={todoist_auth_settings.todoist_client_id}&"
-        f"scope={todoist_auth_settings.todoist_scope}&"
-        f"state={todoist_auth_settings.todoist_state}"
+        f"{yandex_auth_settings.yandex_oauth_api_url}?"
+        f"client_id={yandex_auth_settings.yandex_client_id}"
     )
 
     return authorization_url
 
 
-def callback(code: str = None, state: str = None, error: str = None):
-    if state != todoist_auth_settings.todoist_state:
-        raise HTTPException(status_code=400, detail="State parameter mismatch")
-
+def callback(code: str = None, error: str = None):
+ 
     token_params = {
-        "client_id": todoist_auth_settings.todoist_client_id,
-        "client_secret": todoist_auth_settings.todoist_client_secret,
-        "code": code,
-        "redirect_uri": todoist_auth_settings.todoist_redirect_url,
+        "client_id": yandex_auth_settings.yandex_client_id,
+        "client_secret": yandex_auth_settings.yandex_client_secret,
+        "redirect_uri": yandex_auth_settings.yandex_redirect_uri,
     }
+
     try:
         response = requests.post(
-            todoist_auth_settings.todoist_token_exchange_api_url, data=token_params
+            yandex_auth_settings.yandex_oauth_api_url, data=token_params
         )
+        
         response.raise_for_status()
         response_data = response.json()
 
@@ -51,3 +48,4 @@ def callback(code: str = None, state: str = None, error: str = None):
             status_code=500,
             detail=f"Failed to communicate with Todoist: {str(req_err)}",
         )
+
