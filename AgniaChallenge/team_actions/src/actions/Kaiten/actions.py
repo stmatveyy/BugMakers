@@ -1,6 +1,4 @@
-import os
 import requests as rq
-import json as js
 
 from typing import Annotated, Optional, List, Literal
 from pydantic import BaseModel, Field, HttpUrl
@@ -24,22 +22,22 @@ class Space(BaseModel):
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    signature="(title: SpaceTitle, externel_id: Optional[Id] = None)",
+    signature="(title: SpaceTitle, external_id: Optional[Id] = None)",
     arguments=[
         "title",
-        "externel_id"
+        "external_id"
     ],
     description="Creates new Space object")
 def create_task(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
     response = rq.post(
-        "https://example.kaiten.ru/api/latest/spaces",
+        "https://ramzanhac2005.kaiten.ru/api/latest/spaces",
         headers={
             "Authorization": f"Bearer a93ac0b1-c4be-42e5-a59e-ff514b0e279b"
         },
         json = {
             "title": title,
-            "externel_id": external_id
+            "external_id": external_id
         }
     )
 
