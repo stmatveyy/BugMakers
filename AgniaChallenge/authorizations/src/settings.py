@@ -10,10 +10,10 @@ class TodoistAuthSettings(BaseSettings):
     todoist_oauth_api_url: str = "https://todoist.com/oauth/authorize/"
     todoist_token_exchange_api_url: str = "https://todoist.com/oauth/access_token/"
     todoist_redirect_url: str = "http://localhost:9000"
-    todoist_client_id: str = "51379933"
+    todoist_client_id: str = "15d3a6c1c1a34ad591d7233b05d59a6d"
     todoist_scope: str = "task:add,data:read,data:read_write,data:delete"
     todoist_state: str = "some_secret_state"
-    todoist_client_secret: str = "6409a46c4d38fc1d4f3b853be11a9fc580beca39"
+    todoist_client_secret: str = "96e9b8009985409dae8b3cdad4ea0e9c"
 
 class GitFlameAuthSettings(BaseSettings):
     ...
