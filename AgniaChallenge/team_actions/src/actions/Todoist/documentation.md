@@ -2,6 +2,7 @@
 Id = Annotated[str, Field(pattern="^[0-9]+$")]
 UserId = Annotated[Id]
 TaskId = Annotated[Id]
+ProjectId = str
 TaskName = Annotated[str, Field(description="A well-crafted task name.")]
 Datetime = Annotated[str, Field(pattern=r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")]
 ShortDatetime = Annotated[str, Field(pattern=r"^\d{4}-\d{2}-\d{2}$")]
@@ -52,6 +53,18 @@ class Task(BaseModel):
 class ActiveTasks(BaseModel):
     result: List[Task]
 
+class Project(BaseModel):
+    name: str
+    parent_id: Optinal[str]
+    color: Optinal[str]
+    is_favorite:Optional[bool]
+    view_style: Optional[str]
+
+class Sections(BaseModel):
+    id: Id
+    project_id: ProjectId
+    order: Annotated[int, Field(ge=1)]
+    name: str
 
 class Entity(BaseModel):
     name: str
