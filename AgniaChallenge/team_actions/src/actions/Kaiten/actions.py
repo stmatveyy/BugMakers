@@ -17,36 +17,40 @@ Lane = Annotated[str, Field(description="A lane")]
 URL = "https://ramzanhac2005.kaiten.ru/api/latest"
 HEADERS = {"Authorization": f"Bearer a93ac0b1-c4be-42e5-a59e-ff514b0e279b"}
 
+
 def get_res(res):
 
     res.raise_for_status()
     data = res.json()
     return data
 
+
 class Space(BaseModel):
 
     title: SpaceTitle
     external_id: Optional[Id]
 
+
 class BoardColumn(BaseModel):
-    id : Id	
-    title: str	
+    id: Id
+    title: str
     sort_order: int
-    col_count: int	
+    col_count: int
     type: Literal[1, 2, 3]
-    board_id: int	 
+    board_id: int
     column_id: None
     external_id: Optional[str]
     rules: int
 
 
 class BoardLanes(BaseModel):
-    id : Id	
-    title: str	
+    id: Id
+    title: str
     sort_order: int
     board_id: int
     condition: Literal[1, 2, 3]
     external_id: Optional[str]
+
 
 class Column(BaseModel):
     id: Id
@@ -103,6 +107,7 @@ class Card(BaseModel):
     public: bool
     cardRole: int
 
+
 class Board(BaseModel):
     id: Id
     title: BoardTitle
@@ -124,59 +129,57 @@ class Board(BaseModel):
 def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
     res = rq.post(
-        URL+'/spaces',
+        URL + "/spaces",
         headers=HEADERS,
         json={"title": title, "external_id": external_id},
     )
 
     return get_res(res)
 
-    
-
 
 @register_action(
-    system_type="task_tracker", include_in_plan=True,
+    system_type="task_tracker",
+    include_in_plan=True,
     signature="(space_id: int, title: str, column: list, \
                 lanes: list, description: Optional[str], \
                 external_id: Optional[int | str]) -> Board",
-    arguments=[
-        "title", "column",
-        "lanes", "description",
-        "external_id", "space_id"
-    ],
-    description="Create new Bord object"
+    arguments=["title", "column", "lanes", "description", "external_id", "space_id"],
+    description="Create new Bord object",
 )
-def create_board(space_id: int, title: str, columns: list[Column],
-                lanes: list, description: Optional[str],
-                external_id: Optional[int | str]) -> Board:
-    
+def create_board(
+    space_id: int,
+    title: str,
+    columns: list[Column],
+    lanes: list,
+    description: Optional[str],
+    external_id: Optional[int | str],
+) -> Board:
+
     res = rq.post(
         URL + f"/spaces/{space_id}/boards",
         headers=HEADERS,
-        json={            
+        json={
             "title": title,
             "column": columns,
             "lanes": lanes,
             "description": description,
-            "externel_id": external_id
-        }
+            "external_id": external_id,
+        },
     )
 
     return get_res(res)
+
 
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
     signature="(space_id: int) -> Board",
     description="Get list of Boards",
-    arguments=['space_id']
+    arguments=["space_id"],
 )
 def get_bords_list(space_id: str) -> List[Board]:
 
-    res = rq.get(
-        URL + f"/{space_id}",
-        headers=HEADERS
-    )
+    res = rq.get(URL + f"/{space_id}", headers=HEADERS)
 
     return get_res(res)
 
@@ -184,27 +187,21 @@ def get_bords_list(space_id: str) -> List[Board]:
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    arguments=["board_id",
-                "title",
-                "sort_order"
-                "type"],
+    arguments=["board_id", "title", "sort_order" "type"],
     signature="(board_id: int, title: str, \
                 sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn",
-    description="Create Column object"
+    description="Create Column object",
 )
-def create_column(board_id: int, title: str,
-                  sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn:
-    
+def create_column(
+    board_id: int, title: str, sort_order: Optional[int], type: Literal[0, 1, 3]
+) -> BoardColumn:
+
     res = rq.post(
         URL + f"/boards/{board_id}/columns",
         headers=HEADERS,
-        json={
-            "title": title,
-            "sort_order": sort_order,
-            "type": type
-        }
+        json={"title": title, "sort_order": sort_order, "type": type},
     )
-    
+
     return get_res(res)
 
 
@@ -214,17 +211,18 @@ def create_column(board_id: int, title: str,
     signature="(title: int | str, board_id: int, \
                 asap: Optional[bool], due_date: Optional[Date], \
                 sort_order: Optional[str], description: Optional[int | str]) -> Card",
-    arguments=[
-        "title", "board_id",
-        "asap", "due_date",
-        "soet_order", "description"
-    ],
-    description="create Card object"
+    arguments=["title", "board_id", "asap", "due_date", "soet_order", "description"],
+    description="create Card object",
 )
-def create_card(title: int | str, board_id: int, \
-                asap: Optional[bool], due_date: Optional[Date], \
-                sort_order: Optional[str], description: Optional[int | str]) -> Card:
-    
+def create_card(
+    title: int | str,
+    board_id: int,
+    asap: Optional[bool],
+    due_date: Optional[Date],
+    sort_order: Optional[str],
+    description: Optional[int | str],
+) -> Card:
+
     res = rq.post(
         URL,
         headers=HEADERS,
@@ -233,8 +231,8 @@ def create_card(title: int | str, board_id: int, \
             "board_id": board_id,
             "asap": asap,
             "sort_order": sort_order,
-            "description": description    
-        }
+            "description": description,
+        },
     )
 
     return get_res(res)

@@ -154,7 +154,7 @@ def create_new_project(
     is_favorite: Optional[bool] = None,
     view_style: Optional[str] = None,
 ) -> Project:
-    # Логика вызова API Todoist для создания задачи
+    # Логика вызова API Todoist для создания проекта
     response = requests.post(
         "https://api.todoist.com/rest/v2/projects",
         headers={"Authorization": f"Bearer {authorization_data['Todoist']}"},

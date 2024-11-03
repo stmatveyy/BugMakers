@@ -251,3 +251,14 @@ Parameters:
 
 Returns:
 A time entry object (Time)
+
+## get_all_workspace
+
+Description:
+Gives all workspaces for a specific role
+
+Parameters:
+- roles(Optional[str]): Role of a project member
+
+Returns:
+Return Workspace object
