@@ -1,18 +1,18 @@
 # TypeHints Definition
 Id = Annotated[int, Field(description="Any ID represented as a string.")]
-SpaceTitle = Annotated[str, Field(descripton="A well-crafted space title.")]
+SpaceTitle = Annotated[str | int, Field(descripton="A well-crafted space title.")]
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
 
-Date = Annotated[str, Fiels(description="A date when an entity was created")]
+Date = Annotated[str, Field(description="A date when an entity was created")]
 
 
 # Models definition
 
 class Space(BaseModel):
-    id: Id | str
+    id: Id
     title: SpaceTitle
     created: Date
     updated: Date

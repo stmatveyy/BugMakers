@@ -5,7 +5,7 @@ from team_actions.src.registration import fetch_available_actions
 
 systems_info: Dict[str, Any] = {
     "task_tracker": {
-        "description": "Manages tasks, issues, and projects (e.g., Todoist, TeamFlame).",
+        "description": "Manages tasks, issues, and projects (e.g., Todoist, TeamFlame, Kaiten).",
         "systems": {
             "TeamFlame": "TeamFlame is a task tracking system where spaces hold projects, projects contain Kanban boards, and boards manage tasks across columns like 'To Do', 'In Progress' and 'Done'. Tasks have statuses such as epic, bug, etc., ensuring efficient organization and workflow control.",
             "Todoist": "Todoist is a task management app that organizes tasks into projects, allows setting due dates, priorities, and creating sub-tasks. It supports collaboration, custom filters, reminders, and tracks productivity across devices.",
