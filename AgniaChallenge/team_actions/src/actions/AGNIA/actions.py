@@ -24,9 +24,9 @@ class LLMResponse(BaseModel):
     arguments=["prompt"],
     description="Generates response based on given prompt",
 )
-def ask_lama(prompt: str) -> LLMResponse:
+def ask_agnia(prompt: str) -> LLMResponse:
     res = rq.post(url="https://aes-agniachallenge-case.olymp.innopolis.university/llm/get-response",
-                  json={"team_id": authorization_data["LLAMA"], 
+                  json={"team_id": authorization_data["AGNIA"], 
                         "temperature": 0.11,
                         "max_tokens": 2000,
                         "min_tokens": 300,

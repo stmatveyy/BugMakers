@@ -29,7 +29,7 @@ systems_info: Dict[str, Any] = {
         "description": "A general-purpose service for generating text",
         "systems":
         {
-            "LLAMA" : "LLAMA is a AI model that generates text by prompt"
+            "AGNIA" : "AGNIA is a AI model that generates text by prompt"
         }
     }
 }

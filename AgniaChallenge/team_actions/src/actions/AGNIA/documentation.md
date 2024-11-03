@@ -15,13 +15,13 @@ class LLMResponse(BaseModel):
 
 # API Calls Documentation
 
-## ask_lama
+## ask_agnia
 
 Description: 
-Calls to LLAMA for text generation
+Calls to AGNIA for text generation
 
 Parameters:
-- prompt(str): A user-written prompt for LLAMA. 
+- prompt(str): A user-written prompt for AGNIA neural network. 
 
 Returns:
 A LLMResponse object
