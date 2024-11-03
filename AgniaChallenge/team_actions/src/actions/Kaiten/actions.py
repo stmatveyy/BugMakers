@@ -11,7 +11,7 @@ SpaceTitle = Annotated[str | int, Field(descripton="A well-crafted space title."
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
-Date = Annotated[str, Field(description="A date when an entity was created")]
+Date = Annotated[str, Field(description="A date when an entity was created", regex="^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?(Z|\+\d{2}:\d{2}|-\d{2}:\d{2})?$")]
 
 
 
@@ -37,7 +37,7 @@ class BoardColumn(BaseModel):
     type: Literal[1, 2, 3]
     board_id: int	 
     column_id: None
-    external_id: Optional[str, None]
+    external_id: Optional[str]
     rules: int
 
 
@@ -47,7 +47,7 @@ class BoardLanes(BaseModel):
     sort_order: int
     board_id: int
     condition: Literal[1, 2, 3]
-    external_id: Optional[str, None]
+    external_id: Optional[str]
 
 class Column(BaseModel):
     id: Id
@@ -56,7 +56,7 @@ class Column(BaseModel):
     type: Literal[1, 2, 3]
     board_id: Id
     column_id: None
-    external_id: Optional[str, None]
+    external_id: Optional[str]
 
 
 class User(BaseModel):
@@ -88,7 +88,7 @@ class Card(BaseModel):
     asap: bool
     created: Date
     updated: Date
-    due_date: Optional[Date, None]
+    due_date: Optional[Date]
     sort_order: int
     state: Literal[1, 2, 3]
     condition: Literal[1, 2]
@@ -109,7 +109,7 @@ class Board(BaseModel):
     title: BoardTitle
     created: Date
     updated: Date
-    external_id: Optional[str, None]
+    external_id: Optional[str]
     description: BoardDescription
     columns: list[BoardColumn]
     lanes: list[BoardLanes]
@@ -118,7 +118,7 @@ class Board(BaseModel):
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    signature="(title: SpaceTitle, external_id: Optional[Id] = None)",
+    signature="(title: SpaceTitle, external_id: Optional[Id] = None) -> Space",
     arguments=["title", "external_id"],
     description="Creates new Space object",
 )
@@ -149,7 +149,7 @@ def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 )
 def create_bord(space_id: int, title: str, column: list,
                 lanes: list, description: Optional[str],
-                externel_id: Optional[int | str]):
+                externel_id: Optional[int | str]) -> Board:
     
     res = rq.post(
         URL + f"/spaces/{space_id}/boards",
@@ -170,7 +170,7 @@ def create_bord(space_id: int, title: str, column: list,
     signature="(space_id: int) -> Board",
     description="Get list of Boards"
 )
-def get_bords_list(space_id: str):
+def get_bords_list(space_id: str) -> Board:
 
     res = rq.get(
         URL + f"/{space_id}",
@@ -183,11 +183,11 @@ def get_bords_list(space_id: str):
 @register_action(
     system_type="task_tracker",
     signature="(board_id: int, title: str, \
-                sort_order: Optional[int], type: Literal[0, 1, 3])",
+                sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn",
     description="Create Column object"
 )
 def create_column(board_id: int, title: str,
-                  sort_order: Optional[int], type: Literal[0, 1, 3]):
+                  sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn:
     
     res = rq.post(
         URL + f"/boards/{board_id}/columns",
@@ -200,6 +200,37 @@ def create_column(board_id: int, title: str,
     )
     
     return get_res(res)
+
+
+@register_action(
+    system_type="task_tracker",
+    signature="(title: int | str, board_id: int, \
+                asap: Optional[bool], due_date: Optional[Date], \
+                sort_order: Optional[str], description: Optional[int | str]) -> Card",
+    description="create Card object"
+)
+def create_card(title: int | str, board_id: int, \
+                asap: Optional[bool], due_date: Optional[Date], \
+                sort_order: Optional[str], description: Optional[int | str]) -> Card:
+    
+    res = rq.post(
+        URL,
+        headers=HEADERS,
+        json={
+            "title": title,
+            "board_id": board_id,
+            "asap": asap,
+            "sort_order": sort_order,
+            "description": description    
+        }
+    )
+
+    return get_res(res)
+
+
+
+
+
 
 
 
