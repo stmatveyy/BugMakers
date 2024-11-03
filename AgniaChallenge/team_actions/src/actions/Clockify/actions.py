@@ -300,3 +300,34 @@ def get_all_progress_time(
     response.raise_for_status()
     data = response.json()
     return data
+
+@register_action(
+    system_type="time_tracker",
+    include_in_plan=True,  # Действие может быть использовано в плане
+    signature="(workspaceId: str, id: Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')], hydrated: Optional[str] = None) -> Time",
+    arguments=[
+        "workspaceId",
+        "id",
+        "hydrated"
+    ],
+    description="Creates a new time",
+)
+def get_all_progress_time(
+    workspaceId: str, 
+    id: Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')], 
+    hydrated: Optional[str] = None
+) -> Time:
+    # Получение итогового времени работы над проектом ver.2
+    response = requests.get(
+        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries/{id}",
+        headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
+        json={
+            "workspaceId": workspaceId,
+            "id": id,
+            "hydrated": hydrated,
+        },
+    )
+
+    response.raise_for_status()
+    data = response.json()
+    return data
