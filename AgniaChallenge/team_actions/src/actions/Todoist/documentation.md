@@ -6,7 +6,7 @@ ProjectId = str
 TaskName = Annotated[str, Field(description="A well-crafted task name.")]
 Datetime = Annotated[str, Field(pattern=r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")]
 ShortDatetime = Annotated[str, Field(pattern=r"^\d{4}-\d{2}-\d{2}$")]
-TimezoneString = Annotated[str, Field(description="Timezone definition in tzdata-compatible format or UTC offset (e.g. `Europe/Berlin`)")]
+TimezoneString = Annotated[str, Field(description="Timezone definition in tzdata-compatible format or UTC offset (e.g. Europe/Berlin)")]
 DueString = Annotated[str, Field(description="Due date must match english language", example="tomorrow")]
 DueLang = Annotated[str, Field(pattern="^[a-z]{2}$", default="en")]
 DurationUnit = Literal['minute', 'day']
@@ -72,12 +72,12 @@ class Entity(BaseModel):
 
 
 # API Calls Documentation
-## `create_task`
+## create_task
 
-**Description**:
+Description:
 Creates a new task in the system with optional parameters like descriptions, project and section IDs, and duration.
 
-**Parameters**:
+Parameters:
 - content (TaskName): The name of the task.
 - description (Optional[str]): A brief description of the task.
 - project_id (Optional[Id]): The task project ID. If not set, task is put to user's Inbox.
@@ -87,9 +87,9 @@ Creates a new task in the system with optional parameters like descriptions, pro
 - due_string (Optional[DueString]): Human-defined task due date (e.g., 'next Monday', 'Tomorrow').
 - due_lang (Optional[DueLang]): 2-letter language code.
 - due_date (Optional[ShortDatetime]): Specific date in YYYY-MM-DD format relative to user’s timezone.
-- due_datetime (Optional[Datetime]): Specific date and time in RFC3339 format, e.g. `2023-10-05T14:48:00-05:00`.
+- due_datetime (Optional[Datetime]): Specific date and time in RFC3339 format, e.g. 2023-10-05T14:48:00-05:00.
 - duration (Optional[Duration]): A dictionary representing a task duration.
 - duration_unit (Optional[DurationUnit]): The unit of time that the duration field above represents.
 
-**Returns**:
+Returns:
 - created_task (Task)

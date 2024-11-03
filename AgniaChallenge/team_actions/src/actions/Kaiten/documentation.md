@@ -6,23 +6,24 @@ BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
 
+Date = Annotated[str, Fiels(description="A date when an entity was created")]
+
 
 # Models definition
 
 class Space(BaseModel):
-    id: Id
+    id: Id | str
     title: SpaceTitle
-    created: str
-    updated: str
+    created: Date
+    updated: Date
     external_id: Optional[str, None]
     description: SpaceDescription
-
 
 class Board(BaseModel):
     id: Id
     title: BoardTitle
-    created: str
-    updated: str
+    created: Date
+    updated: Date
     external_id: Optional[str, None]
     description: BoardDescription
     columns: list[BoardColumn]
@@ -62,8 +63,8 @@ class User(BaseModel):
     id: Id
     full_name: str
     username: str
-    updated: str
-    created: str
+    updated: Date
+    created: Date
     activated: bool
     company_id: int
     default_space_id: int
@@ -74,8 +75,8 @@ class User(BaseModel):
 class UserRole(BaseModel):
     name: str
     company_id: int
-    created: str
-    updated: str
+    created: Date
+    updated: Date
     updated: int
     uid: str
 
@@ -85,9 +86,9 @@ class Card(BaseModel):
     title: str
     description: str
     asap: bool
-    created: str
-    updated: str
-    due_date: Optional[str, None]
+    created: Date
+    updated: Date
+    due_date: Optional[Date, None]
     sort_order: int
     state: Literal[1, 2, 3]
     condition: Literal[1, 2]

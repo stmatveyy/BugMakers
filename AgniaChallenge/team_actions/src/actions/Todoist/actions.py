@@ -127,6 +127,7 @@ def create_task(
             "duration_unit": duration_unit,
         },
     )
+
     response.raise_for_status()
     data = response.json()
     return data
