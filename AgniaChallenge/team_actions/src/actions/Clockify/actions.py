@@ -249,7 +249,7 @@ def create_new_time_entry(
 ) -> Time:
     # Логика вызова API Clockify для создания времени входа начало работы над проектом
     response = requests.post(
-        "",
+        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries",
         headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
         json={
             "workspaceId": workspaceId,
@@ -270,4 +270,54 @@ def create_new_time_entry(
     data = response.json()
     return data
 
+@register_action(
+    system_type="time_tracker",
+    include_in_plan=True,  # Действие может быть использовано в плане
+    signature="(workspaceId: str, page: Annotated[int, Field(ge=1)], page_size: Annotated[int, Field(ge=1, le=1000, default=10)]) -> Time",
+    arguments=[
+        "workspaceId",
+        "page",
+        "page_size"
+    ],
+    description="Creates a new time",
+)
+def create_new_time_entry(
+    workspaceId: str,
+    billable: bool,
+    description: Annotated[str, Field(ge=1, le=3000)],
+    end: Annotated[
+        str, Field(description="Represents an end date in yyyy-MM-ddThh:mm:ssZ format")
+    ],
+    projectId: str,
+    start: Annotated[
+        str,
+        Field(description="Represents a start date in yyyy-MM-ddThh:mm:ssZ format."),
+    ],
+    tagIds: List[str],
+    taskId: str,
+    type: Literal["REGULAR", "BREAK"],
+    customAttributes: Optional[List[CustomAttribute]] = None,
+    customField: Optional[List[CustomField]] = None,
+) -> Time:
+    # Логика вызова API Clockify для создания времени входа начало работы над проектом
+    response = requests.post(
+        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries",
+        headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
+        json={
+            "workspaceId": workspaceId,
+            "billable": billable,
+            "description": description,
+            "end": end,
+            "projectId": projectId,
+            "start": start,
+            "tagIds": tagIds,
+            "taskId": taskId,
+            "type": type,
+            "customAttributes": customAttributes,
+            "customField": customField,
+        },
+    )
 
+    response.raise_for_status()
+    data = response.json()
+    return data
