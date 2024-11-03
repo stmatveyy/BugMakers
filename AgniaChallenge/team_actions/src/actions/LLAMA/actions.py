@@ -18,25 +18,20 @@ class LLMResponse(BaseModel):
     output: str
 
 @register_action(
-    system_type="ask_lama",
-    include_in_plan=False,
-    signature="(prompt: str, temperature: Optional[float] = 0, max_tokens: Optional[int] = 20, length_penalty: Optional[int] = -45) -> LLMResponse",
-    arguments=["prompt", "max_tokens", "temperature", "length_penalty"],
+    system_type="AI",
+    include_in_plan=True,
+    signature="(prompt: str) -> LLMResponse",
+    arguments=["prompt"],
     description="Generates response based on given prompt",
 )
-def ask_lama(
-             prompt: str,
-             temperature: Optional[float] = 0,
-             max_tokens: Optional[int] = 20,
-             length_penalty: Optional[int] = -45) -> LLMResponse:
-    
+def ask_lama(prompt: str) -> LLMResponse:
     res = rq.post(url="https://aes-agniachallenge-case.olymp.innopolis.university/llm/get-response",
                   json={"team_id": authorization_data["LLAMA"], 
-                        "prompt": "Ответь на следующий запрос на Русском языке: " + prompt, 
-                        "temperature": temperature, 
-                        "max_tokens": max_tokens,
-                        "length_penalty": length_penalty})
+                        "temperature": 0.11,
+                        "max_tokens": 2000,
+                        "min_tokens": 300,
+                        "prompt": "Ты - бот-асстистент. Ответь на запрос на Русском языке" + prompt})
     
     res.raise_for_status()
     data = res.json()
-    return LLMResponse(output=data["output"])
+    return data["output"]

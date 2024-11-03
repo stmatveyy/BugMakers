@@ -18,13 +18,10 @@ class LLMResponse(BaseModel):
 ## ask_lama
 
 Description: 
-Answer generation by given prompt with LLAMA
+Calls to LLAMA for text generation
 
 Parameters:
 - prompt(str): A user-written prompt for LLAMA. 
-- temperature(Optional[float]): A temperature for text generation
-- max_tokens(Optional[int]): Max tokens 
-- length_penalty(Optional[int]): Penalty for longer sequences
 
 Returns:
 A LLMResponse object
