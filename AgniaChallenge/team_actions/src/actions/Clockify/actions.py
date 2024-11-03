@@ -283,8 +283,8 @@ def create_new_time_entry(
 )
 def get_all_progress_time(
     workspaceId: str, 
-    page: Annotated[int, Field(ge=1)], 
-    page_size: Annotated[int, Field(ge=1, le=1000, default=10)]
+    page: Optional[Annotated[int, Field(ge=1)]], 
+    page_size: Optional[Annotated[int, Field(ge=1, le=1000, default=10)]]
 ) -> Time:
     # Получение итогового времени работы над проектом
     response = requests.get(
@@ -312,7 +312,7 @@ def get_all_progress_time(
     ],
     description="Creates a new time",
 )
-def get_all_progress_time(
+def get_specific_time_entry(
     workspaceId: str, 
     id: Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')], 
     hydrated: Optional[str] = None

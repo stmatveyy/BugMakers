@@ -229,9 +229,9 @@ Returns:
 ## get_all_progress_time
 
 Description:
-
+Get a total in 
 
 Parameters:
-
+- workspaceId()
 
 Returns:
