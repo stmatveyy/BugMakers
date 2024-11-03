@@ -59,19 +59,20 @@ class Task(BaseModel):
     url: HttpUrl
     duration: Optional[Duration]
 
+
 class Project(BaseModel):
     name: str
     parent_id: Optional[str]
     color: Optional[str]
-    is_favorite:Optional[bool]
+    is_favorite: Optional[bool]
     view_style: Optional[str]
+
 
 class Sections(BaseModel):
     id: Id
     project_id: ProjectId
     order: Annotated[int, Field(ge=1)]
     name: str
-
 
 
 @register_action(
@@ -132,9 +133,10 @@ def create_task(
     data = response.json()
     return data
 
+
 @register_action(
     system_type="task_tracker",
-    include_in_plan=True, 
+    include_in_plan=True,
     signature="(name: str, parent_id: Optional[str] = None, color: Optional[str] = None, is_favorite: Optional[bool] = None, view_style: Optional[str] = None) -> Project",
     arguments=[
         "name",
@@ -176,10 +178,9 @@ class Sections(BaseModel):
     name: str
 
 
-
 @register_action(
     system_type="task_tracker",
-    include_in_plan=True, 
+    include_in_plan=True,
     signature="(id: Id, project_id: str, order: Annotated[int, Field(ge=1)] = None, name: str = None) -> Sections",
     arguments=[
         "id",
@@ -190,10 +191,7 @@ class Sections(BaseModel):
     description="Creates a new section",
 )
 def create_new_section(
-    id: Id,
-    project_id: str,
-    name: str,
-    order: Annotated[int, Field(ge=1)] = None
+    id: Id, project_id: str, name: str, order: Annotated[int, Field(ge=1)] = None
 ) -> Sections:
     response = requests.post(
         "https://api.todoist.com/rest/v2/sections",

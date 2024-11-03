@@ -9,7 +9,7 @@ systems_info: Dict[str, Any] = {
         "systems": {
             "TeamFlame": "TeamFlame is a task tracking system where spaces hold projects, projects contain Kanban boards, and boards manage tasks across columns like 'To Do', 'In Progress' and 'Done'. Tasks have statuses such as epic, bug, etc., ensuring efficient organization and workflow control.",
             "Todoist": "Todoist is a task management app that organizes tasks into projects, allows setting due dates, priorities, and creating sub-tasks. It supports collaboration, custom filters, reminders, and tracks productivity across devices.",
-            "Kaiten" : "Kaiten is a task management app that organizes tasks (cards) into projects (boards) and spaces. It allows to organise tasks by custom statuses."
+            "Kaiten": "Kaiten is a task management app that organizes tasks (cards) into projects (boards) and spaces. It allows to organise tasks by custom statuses.",
         },
     },
     "version_control_system": {
