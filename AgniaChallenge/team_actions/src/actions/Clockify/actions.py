@@ -213,8 +213,9 @@ class Time(BaseModel):
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
-    signature="(workspaceId: str,billable: Optional[bool],description: Optional[Annotated[str, Field(ge=1, le=3000)]],end: Optional[Annotated[str, Field(description=\"Represents an end date in yyyy-MM-ddThh:mm:ssZ format\")]],projectId: Optional[str],start: Optional[Annotated[str,Field(description=\"Represents a start date in yyyy-MM-ddThh:mm:ssZ format.\"),]],tagIds: Optional[List[str]],taskId: Optional[str],type: Optional[Literal[\"REGULAR\", \"BREAK\"]],customAttributes: Optional[List[CustomAttribute]] = None,customField: Optional[List[CustomField]] = None,) -> Time",
+    signature="(workspaceName: str, workspaceId: str, billable: Optional[bool],description: Optional[Annotated[str, Field(ge=1, le=3000)]],end: Optional[Annotated[str, Field(description=\"Represents an end date in yyyy-MM-ddThh:mm:ssZ format\")]],projectId: Optional[str],start: Optional[Annotated[str,Field(description=\"Represents a start date in yyyy-MM-ddThh:mm:ssZ format.\"),]],tagIds: Optional[List[str]],taskId: Optional[str],type: Optional[Literal[\"REGULAR\", \"BREAK\"]],customAttributes: Optional[List[CustomAttribute]] = None,customField: Optional[List[CustomField]] = None,) -> Time",
     arguments=[
+        "workspaceName",
         "workspaceId",
         "billable",
         "customAttributes",
@@ -230,6 +231,7 @@ class Time(BaseModel):
     description="Creates a new time",
 )
 def create_new_time_entry(
+    workspaceName: str,
     workspaceId: str,
     billable: Optional[bool],
     description: Optional[Annotated[str, Field(ge=1, le=3000)]],
@@ -249,9 +251,23 @@ def create_new_time_entry(
 ) -> Time:
     # Логика вызова API Clockify для создания времени входа начало работы над проектом
 
-    
+    response = requests.get(
+        f"https://api.clockify.me/api/v1/workspaces",
+        headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
+        json={
+            "roles": Optional[Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]],
+        },
+    )
+
+    needed_workspace = [sp for sp in response.json() if sp["name"] == workspaceName][0]
+
+    needed_ws_id = needed_workspace["id"]
+
+    response.raise_for_status()
+    data = response.json()
+
     response = requests.post(
-        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries",
+        f"https://api.clockify.me/api/v1/workspaces/{needed_ws_id}/time-entries",
         headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
         json={
             "workspaceId": workspaceId,

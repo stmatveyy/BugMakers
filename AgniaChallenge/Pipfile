@@ -10,6 +10,9 @@ pydantic-settings = "~=2.2.1"
 requests = "~=2.31.0"
 httpx = "*"
 aiohttp = "*"
+tensorflow="*"
+matplotlib="*"
+numpy="*"
 
 [dev-packages]
 

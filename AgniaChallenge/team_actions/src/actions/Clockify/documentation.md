@@ -10,6 +10,7 @@ class User(BaseModel):
 
 
 class Workspace(BaseModel):
+    workspaceName: str,
     id: Optional[str]
     roles: Optional[
         Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]
@@ -205,6 +206,7 @@ Description:
 Creates a new time entry for the user to track time from the beginning of work
 
 Parameters:
+- workspaceName(str): Name of the workspace
 - workspaceId(str): Id of the workspace
 - billable(bool): Whether the time entry is billable of not
 - description(Annotated[str, Field(ge=1, le=3000)]): Represents time entry description.

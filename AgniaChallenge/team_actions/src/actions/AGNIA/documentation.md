@@ -15,16 +15,13 @@ class LLMResponse(BaseModel):
 
 # API Calls Documentation
 
-## ask_lama
+## ask_agnia
 
 Description: 
-Answer generation by given prompt with LLAMA
+Calls to AGNIA for text generation
 
 Parameters:
-- prompt(str): A user-written prompt for LLAMA. 
-- temperature(Optional[float]): A temperature for text generation
-- max_tokens(Optional[int]): Max tokens 
-- length_penalty(Optional[int]): Penalty for longer sequences
+- prompt(str): A user-written prompt for AGNIA neural network. 
 
 Returns:
 A LLMResponse object
