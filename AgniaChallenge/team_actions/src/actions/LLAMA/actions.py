@@ -19,7 +19,7 @@ class LLMResponse(BaseModel):
 
 @register_action(
     system_type="ask_lama",
-    include_in_plan=True,
+    include_in_plan=False,
     signature="(prompt: str, temperature: Optional[float] = 0, max_tokens: Optional[int] = 20, length_penalty: Optional[int] = -45) -> LLMResponse",
     arguments=["prompt", "max_tokens", "temperature", "length_penalty"],
     description="Generates response based on given prompt",

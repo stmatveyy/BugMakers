@@ -5,17 +5,16 @@ from pydantic import BaseModel, Field, HttpUrl
 from requests.auth import HTTPBasicAuth
 from team_actions.src.registration import register_action
 
+authorization_data = {}
+
 Id = Annotated[int, Field(description="Any ID represented as a string.")]
 SpaceTitle = Annotated[str | int, Field(descripton="A well-crafted space title.")]
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
 Date = Annotated[str, Field(description="A date when an entity was created")]
-Lane = Annotated[str, Field(description="A lane")]
 
-
-URL = "https://ramzanhac2005.kaiten.ru/api/latest"
-HEADERS = {"Authorization": f"Bearer a93ac0b1-c4be-42e5-a59e-ff514b0e279b"}
+URL = "https://ee3068316.kaiten.ru/api/latest"
 
 def get_res(res):
 
@@ -108,25 +107,27 @@ class Board(BaseModel):
     title: BoardTitle
     created: Date
     updated: Date
-    external_id: Optional[str]
+
     description: BoardDescription
     columns: list[BoardColumn]
     lanes: list[BoardLanes]
 
+class Lane(BaseModel):
+    title: str
 
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    signature="(title: SpaceTitle, external_id: Optional[Id] = None) -> Space",
-    arguments=["title", "external_id"],
+    signature="(title: SpaceTitle) -> Space",
+    arguments=["title"],
     description="Creates new Space object",
 )
-def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
+def create_space(title: SpaceTitle) -> Space:
 
     res = rq.post(
         URL+'/spaces',
-        headers=HEADERS,
-        json={"title": title, "external_id": external_id},
+        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
+        json={"title": title},
     )
 
     return get_res(res)
@@ -134,29 +135,25 @@ def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
 @register_action(
     system_type="task_tracker", include_in_plan=True,
-    signature="(space_id: int, title: str, column: list, \
-                lanes: list, description: Optional[str], \
-                external_id: Optional[int | str]) -> Board",
+    signature="(space_id: int, title: str | int, columns: list[Column], \
+                lanes: list[Lane], description: Optional[str]) -> Board",
     arguments=[
-        "title", "column",
-        "lanes", "description",
-        "external_id", "space_id"
+        "title", "columns",
+        "lanes", "description", "space_id"
     ],
-    description="Create new Bord object"
+    description="Create new Board object"
 )
-def create_board(space_id: int, title: str, columns: list[Column],
-                lanes: list, description: Optional[str],
-                external_id: Optional[int | str]) -> Board:
+def create_board(space_id: int, title: str | int, columns: list[Column],
+                lanes: list[Lane], description: Optional[str]) -> Board:
     
     res = rq.post(
         URL + f"/spaces/{space_id}/boards",
-        headers=HEADERS,
+        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
         json={            
             "title": title,
-            "column": columns,
+            "columns": columns,
             "lanes": lanes,
             "description": description,
-            "externel_id": external_id
         }
     )
 
@@ -173,7 +170,7 @@ def get_bords_list(space_id: str) -> List[Board]:
 
     res = rq.get(
         URL + f"/{space_id}",
-        headers=HEADERS
+        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"}
     )
 
     return get_res(res)
@@ -184,7 +181,7 @@ def get_bords_list(space_id: str) -> List[Board]:
     include_in_plan=True,
     arguments=["board_id",
                 "title",
-                "sort_order"
+                "sort_order",
                 "type"],
     signature="(board_id: int, title: str, \
                 sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn",
@@ -195,7 +192,7 @@ def create_column(board_id: int, title: str,
     
     res = rq.post(
         URL + f"/boards/{board_id}/columns",
-        headers=HEADERS,
+        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
         json={
             "title": title,
             "sort_order": sort_order,
@@ -225,7 +222,7 @@ def create_card(title: int | str, board_id: int, \
     
     res = rq.post(
         URL,
-        headers=HEADERS,
+        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
         json={
             "title": title,
             "board_id": board_id,

@@ -10,7 +10,7 @@ class User(BaseModel):
 
 
 class Workspace(BaseModel):
-    id: str
+    id: Optional[str]
     roles: Optional[
         Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]
     ]
@@ -233,6 +233,8 @@ Get all active time entries for workspace
 
 Parameters:
 - workspaceId(str): Id of the workspace
+- page(Optional[Annotated[int, Field(ge=1)]]): A page
+- page_size(Optional[Annotated[int, Field(ge=1, le=1000, default=10)]]): A page_size
 
 Returns:
 - A list of time (List[Time]) entries that are active
@@ -255,3 +257,46 @@ A time entry object (Time)
 ## add_new_project
 
 Description: 
+Adds new project
+
+Parameters:
+- workspaceId(str): An Id of a workspace
+- name(Annotated[str, Field(ge=2, le=250)]): A name for the project
+- billable(Optional[bool]): Whether the project is billable or not
+
+## get_time_entries_for_user
+
+Description:
+Get user-specific time entries
+
+Parameters:
+- workspaceId(str): Id of the workspace
+- userId(Annotated[str, Field(example='5a0ab5acb07987125438b60f')]): User id
+- description(Optional[str])A description of the time entry to search for
+- project(Optional[str]): A project id that matches project_id field of the Time entry
+
+Returns:
+A list of Time objects
+
+## create_workspace
+
+Description:
+Creates a workspace
+
+Parameters:
+- name(Annotated[str, Field(ge=2, le=250)]): A name of the workspace
+- organizationId(Optional[str]): An organisation id
+
+Returns:
+A Workspace object
+
+## get_all_workspace
+
+Description:
+Gives all workspaces for a specific role
+
+Parameters:
+- roles(Optional[str]): Role of a project member
+
+Returns:
+Return Workspace object
