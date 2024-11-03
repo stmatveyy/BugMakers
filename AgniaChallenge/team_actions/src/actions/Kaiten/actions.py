@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field, HttpUrl
 from requests.auth import HTTPBasicAuth
 from team_actions.src.registration import register_action
 
-
 Id = Annotated[int, Field(description="Any ID represented as a string.")]
 SpaceTitle = Annotated[str | int, Field(descripton="A well-crafted space title.")]
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]

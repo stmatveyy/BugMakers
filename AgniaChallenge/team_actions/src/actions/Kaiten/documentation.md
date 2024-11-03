@@ -6,9 +6,9 @@ BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
 
-Date = Annotated[str, Field(description="A date when an entity was created")]
+Date = Annotated[str, Field(description="A date when an entity was created", regex="^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?(Z|\+\d{2}:\d{2}|-\d{2}:\d{2})?$")]
 
-
+  
 # Models definition
 
 class Space(BaseModel):
@@ -36,7 +36,7 @@ class BoardColumn(BaseModel):
     col_count: int	
     type: Literal[1, 2, 3]
     board_id: int	 
-    column_id	null	
+    column_id: Id	
     external_id: Optional[str, None]
     rules: int
 

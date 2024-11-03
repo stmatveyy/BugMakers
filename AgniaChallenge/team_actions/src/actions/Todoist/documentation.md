@@ -94,7 +94,7 @@ Parameters:
 Returns:
 - created_task (Task)
 
-# create_new_project
+## create_new_project
 
 Description:
 Creates a new project in the system with optional parameters like parent_id, parent_id and is_favourite, and color and view_style.
@@ -106,7 +106,7 @@ Parameters:
 - is_favorite(Optional[bool]): Whether the project is a favorite (a true or false value)
 - view_style(Optional[str]): A string value (either "list" or "board"). This determines the way the project is displayed within the Todoist clients. 
 
-# create_new_section
+## create_new_section
 
 Description: Creates a new section wthin a project
 

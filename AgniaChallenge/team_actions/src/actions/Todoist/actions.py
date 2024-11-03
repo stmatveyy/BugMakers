@@ -69,7 +69,7 @@ class Project(BaseModel):
 
 
 class Sections(BaseModel):
-    id: Id
+    # id: Id
     project_id: ProjectId
     order: Annotated[int, Field(ge=1)]
     name: str
@@ -183,7 +183,7 @@ class Sections(BaseModel):
     include_in_plan=True,
     signature="(id: Id, project_id: str, order: Annotated[int, Field(ge=1)] = None, name: str = None) -> Sections",
     arguments=[
-        "id",
+        # "id",
         "project_id",
         "order",
         "name",
@@ -191,7 +191,10 @@ class Sections(BaseModel):
     description="Creates a new section",
 )
 def create_new_section(
-    id: Id, project_id: str, name: str, order: Optional[Annotated[int, Field(ge=1)]] = None
+    # id: Id,
+    project_id: str,
+    name: str,
+    order: Optional[Annotated[int, Field(ge=1)]] = None,
 ) -> Sections:
     response = requests.post(
         "https://api.todoist.com/rest/v2/sections",
