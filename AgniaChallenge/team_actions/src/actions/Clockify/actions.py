@@ -17,10 +17,12 @@ Page = Annotated[str, Field(default="1")]
 
 
 class User(BaseModel):
-    file: str
+    id: Annotated[str, Field(example="64a687e29ae1f428e7ebe303")]
+    email: str
 
 
 class Workspace(BaseModel):
+    id: str
     roles: Optional[
         Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]
     ]
@@ -267,3 +269,5 @@ def create_new_time_entry(
     response.raise_for_status()
     data = response.json()
     return data
+
+
