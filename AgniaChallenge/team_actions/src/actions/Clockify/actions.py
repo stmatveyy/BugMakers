@@ -331,7 +331,7 @@ def get_specific_time_entry(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
     signature="(workspaceId: str, billable: Optional[bool] = None, clientId: Optional[str] = None, color: Optional[Annotated[str, Field(pattern=r'^#(?:[0-9a-fA-F]{6}){1}$')]] = None, costRate: Optional[List] = None, estimate: Optional[List] = None, hourlyRate: Optional[List] = None, isPublic: Optional[bool] = None, mamberships: Optional[List] = None, name: Annotatad[str, Field(ge=2, le=250)], note: Optional[Annotated[str, Field(le=1684)]], tasks: Optional[List] = None) -> Time",
-    arguments=["workspaceId", "id", "hydrated"],
+    arguments=["workspaceId", "billable", "clientId", "note", "name", "color", "costRate", "estimate", "hourlyRate", "isPublic", "mamberships", "tasks"],
     description="Creates a new time",
 )
 def add_new_project(
@@ -364,6 +364,55 @@ def add_new_project(
             "isPublic": isPublic,
             "mamberships": mamberships,
             "tasks": tasks,
+        },
+    )
+
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+@register_action(
+    system_type="time_tracker",
+    include_in_plan=True,  # Действие может быть использовано в плане
+    signature="(workspaceId: str, userId: Annotated[str, Field(example='5a0ab5acb07987125438b60f')], description: Optional[str] = None, start: Optional[Annotated[str, Field(example='start=2020-01-01T00:00:00Z')]] = None, end: Optional[Annotated[str, Field(example='end=2021-01-01T00:00:00Z')]] = None, project: Optional[str] = None, task: Optional[str] = None, tags: Optional[str] = None, project_required: Optional[str] = None, task_required: Optional[str] = None, hydrated: Optional[str] = None, page: Optional[Annotated[str, Field(default='1')]] = None, page_size: Optional[Annotated[str, Field(default='50')]] = None, in_progress: Optional[bool] = None, get_week_before = Optional[str] = None) -> Time",
+    arguments=["workspaceId", "userId", "description", "start", "end", "project", "task", "tags", "project_required", "task_required",  "hydrated", "page", "page_size", "in_progress", "get_week_before"],
+    description="Creates a new time",
+)
+def get_time_entries_for_user(
+    workspaceId: str, 
+    userId: Annotated[str, Field(example='5a0ab5acb07987125438b60f')], 
+    description: Optional[str] = None, 
+    start: Optional[Annotated[str, Field(example='start=2020-01-01T00:00:00Z')]] = None, 
+    end: Optional[Annotated[str, Field(example='end=2021-01-01T00:00:00Z')]] = None, 
+    project: Optional[str] = None, 
+    task: Optional[str] = None, 
+    tags: Optional[str] = None, 
+    project_required: Optional[str] = None, 
+    task_required: Optional[str] = None, 
+    hydrated: Optional[str] = None, 
+    page: Optional[Annotated[str, Field(default='1')]] = None, 
+    page_size: Optional[Annotated[str, Field(default='50')]] = None, 
+    in_progress: Optional[bool] = None, 
+    get_week_before: Optional[str] = None
+    ) -> Time:
+    response = requests.get(
+        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/user/{userId}/time-entries",
+        headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
+        json={
+            "workspaceId": workspaceId,
+            "description": description,
+            "start": start,
+            "end": end,
+            "project": project,
+            "task": task,
+            "tags": tags,
+            "project_required": project_required,
+            "task_required": task_required,
+            "hydrated": hydrated,
+            "page": page,
+            "page_size": page_size,
+            "in_progress": in_progress,
+            "get_week_before": get_week_before,
         },
     )
 
