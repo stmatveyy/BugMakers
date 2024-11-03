@@ -196,3 +196,42 @@ class Time(BaseModel):
     tagIds: List[str]
     taskId: str
     type: Literal["REGULAR", "BREAK"]
+
+
+
+# API Calls Documentation
+## create_new_time_entry
+Description: 
+Creates a new time entry for the user to track time from the beginning of work
+
+Parameters:
+- workspaceId(str): Id of the workspace
+- billable(bool): Whether the time entry is billable of not
+- description(Annotated[str, Field(ge=1, le=3000)]): Represents time entry description.
+- end(Annotated[
+        str, Field(description="Represents an end date in yyyy-MM-ddThh:mm:ssZ format")
+    ]): Represents an end date in yyyy-MM-ddThh:mm:ssZ format.
+- projectId(str): Represents project identifier across the system.
+- start(Annotated[
+        str,
+        Field(description="Represents a start date in yyyy-MM-ddThh:mm:ssZ format."),
+    ]): Represents a start date in yyyy-MM-ddThh:mm:ssZ format.
+- tagIds(List[str]): Represents a list of tag ids.
+- type(Literal["REGULAR", "BREAK"]): Valid time entry type.
+- customAttributes(Optional[List[CustomAttribute]]): Represents a list of create custom field request objects.
+- customField(Optional[List[CustomField]]): Represents a list of value objects for user’s custom fields.
+
+
+Returns:
+- created time entry (Time)
+
+
+## get_all_progress_time
+
+Description:
+
+
+Parameters:
+
+
+Returns:
