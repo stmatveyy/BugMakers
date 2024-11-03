@@ -229,9 +229,25 @@ Returns:
 ## get_all_progress_time
 
 Description:
-Get a total in 
+Get all active time entries for workspace
 
 Parameters:
-- workspaceId()
+- workspaceId(str): Id of the workspace
 
 Returns:
+- A list of time (List[Time]) entries that are active
+
+## get_specific_time_entry
+
+Description:
+Get a specific time entry by its id
+
+
+Parameters:
+
+- workspaceId(str): Id of a workspace
+- id(Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')]): Id of the time entry, e.g. 64c777ddd3fcab07cfbb210c
+- hydrated(Optional[str]): Flag to set whether to include additional information of a time entry or not.
+
+Returns:
+A time entry object (Time)

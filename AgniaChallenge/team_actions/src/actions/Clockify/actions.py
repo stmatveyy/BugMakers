@@ -283,17 +283,14 @@ def create_new_time_entry(
 )
 def get_all_progress_time(
     workspaceId: str, 
-    page: Optional[Annotated[int, Field(ge=1)]], 
-    page_size: Optional[Annotated[int, Field(ge=1, le=1000, default=10)]]
-) -> Time:
-    # Получение итогового времени работы над проектом
+
+) -> List[Time]:
+
     response = requests.get(
         f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries/status/in-progress",
         headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
         json={
             "workspaceId": workspaceId,
-            "page": page,
-            "page_size": page_size,
         },
     )
 
