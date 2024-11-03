@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     backend_api: str = "https://aes-agniachallenge-case.olymp.innopolis.university/"
     root_directory: str = os.path.dirname(__file__)
     user_token_from_tg_bot: str = (
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmYzNzY4NmYtYmZiNy00YWZiLTgyZDQtMGNiMDAwMzJjMjhhIiwiZXhwIjoxNzMwNTc2NjE2LjU4ODQyNywiaXNzIjoiYmFja2VuZDphY2Nlc3MtdG9rZW4ifQ.gTynVUCajiY6ZPf7T9e5IbeDmi_iPVZr86MPJ8uDDCs"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjExNDJlNjMtMjFjNS00MTY3LWEzMWQtM2M1Yjk2NzIzNTlhIiwiZXhwIjoxNzMwNjY5NjYxLjk3NzY4OCwiaXNzIjoiYmFja2VuZDphY2Nlc3MtdG9rZW4ifQ.ygi6RJmf92QdKtZxnCw_6ChCo6M1wCF9w5R9EgTQWX0"
     )
 
 

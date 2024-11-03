@@ -63,7 +63,7 @@ class Project(BaseModel):
 class Sections(BaseModel):
     id: Id
     project_id: ProjectId
-    order: Annotated[int, Field(ge=1)]
+    order: Optional[Annotated[int, Field(ge=1)]]
     name: str
 
 class Entity(BaseModel):
@@ -93,3 +93,25 @@ Parameters:
 
 Returns:
 - created_task (Task)
+
+# create_new_project
+
+Description:
+Creates a new project in the system with optional parameters like parent_id, parent_id and is_favourite, and color and view_style.
+
+Parameters:
+- name (str): The name of the project.
+- parent_id (Optional[str]): An Id of the parent project
+- color(Optional[str]): The color of the project icon in the hexidecimal format, e.g. #96c3eb
+- is_favorite(Optional[bool]): Whether the project is a favorite (a true or false value)
+- view_style(Optional[str]): A string value (either "list" or "board"). This determines the way the project is displayed within the Todoist clients. 
+
+# create_new_section
+
+Description: Creates a new section wthin a project
+
+Parameters:
+- name (str): The name of the section.
+- project_id (str): Project ID this section should belong to
+- order(Optional[Annotated[int, Field(ge=1)]]): Order among other sections in a project
+

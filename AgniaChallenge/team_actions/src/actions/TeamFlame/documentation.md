@@ -2,6 +2,7 @@
 
 TaskName = Annotated[str, Field(description="A well-crafted task name.")]
 MongoID = Annotated[str, Field(regex="^[0-9a-f]{24}$")]
+ColumnId = Annotated[str, Field(regex="^[0-9a-f]{24}$", description="An Id for the column")]
 PriorityChoice = Annotated[str, Field(regex="^(low|middle|high)$")]
 Datetime = Annotated[
     str,
@@ -78,7 +79,7 @@ class Project(BaseModel):
 
 
 class Column(BaseModel):
-    id: MongoID
+    id: ColumnId
     name: str
 
 

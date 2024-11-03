@@ -5,9 +5,8 @@ from pydantic import BaseModel, Field, HttpUrl
 from requests.auth import HTTPBasicAuth
 from team_actions.src.registration import register_action
 
-
-Id = Annotated[int | str, Field(description="Any ID represented as a string.")]
-SpaceTitle = Annotated[str, Field(descripton="A well-crafted space title.")]
+Id = Annotated[int, Field(description="Any ID represented as a string.")]
+SpaceTitle = Annotated[str | int, Field(descripton="A well-crafted space title.")]
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
@@ -26,7 +25,7 @@ class Space(BaseModel):
     arguments=["title", "external_id"],
     description="Creates new Space object",
 )
-def create_task(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
+def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
     response = rq.post(
         "https://ramzanhac2005.kaiten.ru/api/latest/spaces",

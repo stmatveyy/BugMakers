@@ -171,10 +171,17 @@ def create_new_project(
     return data
 
 
+class Sections(BaseModel):
+    id: Id
+    project_id: ProjectId
+    order: Annotated[int, Field(ge=1)]
+    name: str
+
+
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    signature="(project_id: str, order: Annotated[int, Field(ge=1)] = None, name: str = None) -> Sections",
+    signature="(id: Id, project_id: str, order: Annotated[int, Field(ge=1)] = None, name: str = None) -> Sections",
     arguments=[
         # "id",
         "project_id",
@@ -187,7 +194,7 @@ def create_new_section(
     # id: Id,
     project_id: str,
     name: str,
-    order: Annotated[int, Field(ge=1)] = None,
+    order: Optional[Annotated[int, Field(ge=1)]] = None,
 ) -> Sections:
     response = requests.post(
         "https://api.todoist.com/rest/v2/sections",

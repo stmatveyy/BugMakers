@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
-import uvicorn
-from authorization_services import todoist, yandex
-from hackathon_utils import (
+
+from .authorization_services import todoist
+from .hackathon_utils import (
     save_authorization_data_and_return_response,
 )
 from authorizations.src.settings import base_hackathon_settings, todoist_auth_settings
@@ -44,13 +44,8 @@ def get_todoist_token(
     )
 
 
-@app.get("/yandex/authorize")
-def authorize_in_yandex():
-    return {"url": yandex.authorize()}
-
-
-@app.get("/yandex/get-token")
-def get_yandex_token(code: str = None, error: str = None):
+@app.post("/kaiten/push-token")
+def push_kaiten_token(authorization_token: str, error: str = None):
     if error == "invalid_application_status":
         raise HTTPException(status_code=500, detail="Invalid application status")
     elif error == "invalid_scope":
@@ -58,19 +53,6 @@ def get_yandex_token(code: str = None, error: str = None):
     elif error == "access_denied":
         raise HTTPException(status_code=403, detail="User denied authorization")
 
-    authorization_token = yandex.callback(code=code, error=error)
-
     return save_authorization_data_and_return_response(
-        authorization_token, system_name="Yandex"
-    )
-
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "proxy_server:app",
-        host="0.0.0.0",
-        port=9000,
-        reload=True,
-        ssl_keyfile="/etc/letsencrypt/live/mlbuy.ru/privkey.pem",
-        ssl_certfile="/etc/letsencrypt/live/mlbuy.ru/fullchain.pem",
+        authorization_token, system_name="Kaiten"
     )
