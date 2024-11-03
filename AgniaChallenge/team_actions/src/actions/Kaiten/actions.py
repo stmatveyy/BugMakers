@@ -10,8 +10,8 @@ SpaceTitle = Annotated[str | int, Field(descripton="A well-crafted space title."
 BoardTitle = Annotated[str, Field(descripton="A well-crafted board title.")]
 BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
-Date = Annotated[str, Field(description="A date when an entity was created", regex="^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?(Z|\+\d{2}:\d{2}|-\d{2}:\d{2})?$")]
-
+Date = Annotated[str, Field(description="A date when an entity was created")]
+Lane = Annotated[str, Field(description="A lane")]
 
 
 URL = "https://ramzanhac2005.kaiten.ru/api/latest"
@@ -124,8 +124,8 @@ class Board(BaseModel):
 def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
     res = rq.post(
-        "https://ramzanhac2005.kaiten.ru/api/latest/spaces",
-        headers={"Authorization": f"Bearer a93ac0b1-c4be-42e5-a59e-ff514b0e279b"},
+        URL+'/spaces',
+        headers=HEADERS,
         json={"title": title, "external_id": external_id},
     )
 
@@ -146,19 +146,19 @@ def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
     ],
     description="Create new Bord object"
 )
-def create_bord(space_id: int, title: str, column: list,
+def create_board(space_id: int, title: str, columns: list[Column],
                 lanes: list, description: Optional[str],
-                externel_id: Optional[int | str]) -> Board:
+                external_id: Optional[int | str]) -> Board:
     
     res = rq.post(
         URL + f"/spaces/{space_id}/boards",
         headers=HEADERS,
         json={            
             "title": title,
-            "column": column,
+            "column": columns,
             "lanes": lanes,
             "description": description,
-            "externel_id": externel_id
+            "externel_id": external_id
         }
     )
 
@@ -166,10 +166,12 @@ def create_bord(space_id: int, title: str, column: list,
 
 @register_action(
     system_type="task_tracker",
+    include_in_plan=True,
     signature="(space_id: int) -> Board",
-    description="Get list of Boards"
+    description="Get list of Boards",
+    arguments=['space_id']
 )
-def get_bords_list(space_id: str) -> Board:
+def get_bords_list(space_id: str) -> List[Board]:
 
     res = rq.get(
         URL + f"/{space_id}",
@@ -181,6 +183,11 @@ def get_bords_list(space_id: str) -> Board:
 
 @register_action(
     system_type="task_tracker",
+    include_in_plan=True,
+    arguments=["board_id",
+                "title",
+                "sort_order"
+                "type"],
     signature="(board_id: int, title: str, \
                 sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn",
     description="Create Column object"
@@ -203,9 +210,15 @@ def create_column(board_id: int, title: str,
 
 @register_action(
     system_type="task_tracker",
+    include_in_plan=True,
     signature="(title: int | str, board_id: int, \
                 asap: Optional[bool], due_date: Optional[Date], \
                 sort_order: Optional[str], description: Optional[int | str]) -> Card",
+    arguments=[
+        "title", "board_id",
+        "asap", "due_date",
+        "soet_order", "description"
+    ],
     description="create Card object"
 )
 def create_card(title: int | str, board_id: int, \
@@ -225,14 +238,3 @@ def create_card(title: int | str, board_id: int, \
     )
 
     return get_res(res)
-
-
-
-
-
-
-
-
-
-
-

@@ -289,8 +289,6 @@ def get_all_progress_time(
         headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
         json={
             "workspaceId": workspaceId,
-            "page": page,
-            "page_size": page_size,
         },
     )
 

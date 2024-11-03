@@ -103,3 +103,77 @@ class Card(BaseModel):
     lane_id: Id
     public: bool
     cardRole: int
+
+# API Calls Documentation
+
+## create_space
+Description: 
+Creates new space 
+
+Parameters:
+
+- title(SpaceTitle): A Space title
+- external_id(Optional[Id]): Any external id you want to assign to space.
+
+Returns:
+New Space object
+
+
+## create_board
+Description:
+Creates a new board
+
+Parameters: 
+
+- space_id(int): Spase Id
+- title(str): Board title
+- columns(list[Columns]): Board columns
+- lanes(list): Board lanes
+- description(str): Board description
+- external_id(Optional[int | str]): Any external id you want to assign to board
+
+Returns: 
+A Board object
+
+
+## get_bords_list
+Description:
+Get a list of boards
+
+
+Parameters:
+- space_id(str): An Id of Space
+
+Returns:
+A list of Boards objects
+
+## create_column
+Description:
+Create a column in a board
+
+Parameters:
+- board_id(int): Id of a board
+- title(str): A title of a column
+- sort_order(Optional[int]): Position
+- type(Literal[0, 1, 3]): A type of title
+
+Returns:
+A BoardColumn object
+
+## create_card
+
+Description: 
+Creates new card
+
+Parameters:
+- title(int | str): A card title
+- board_id(int): An id of a board
+- asap(Optional[bool]): Card asap flag
+- due_date(Optional[Date]): Card deadline 
+- sort_order(Optional[str]): Position
+- description(Optional[int | str]): Card description
+
+Returns:
+A Card object
+
+

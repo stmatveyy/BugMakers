@@ -17,7 +17,14 @@ systems_info: Dict[str, Any] = {
         "systems": {
             "GitFlame": "GitFlame is a version control and collaboration tool that integrates Git repositories with task management.",
         },
+    
     },
+    "time_tracker": {
+        "description" : "A rool for time-management, productivity and team work",
+        "systems": {
+            "Clockify" : "Clockify is a time tracking service designed to help organizations track employee productivity, view their attendance and billable hours."
+        }
+    }
 }
 
 available_actions: Dict[str, Any] = fetch_available_actions()
