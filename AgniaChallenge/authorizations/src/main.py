@@ -43,19 +43,16 @@ def get_todoist_token(
         authorization_token, system_name="Todoist"
     )
 
+
 @app.post("/kaiten/push-token")
-def push_kaiten_token(
-        authorization_token: str,
-        error: str = None
-):
+def push_kaiten_token(authorization_token: str, error: str = None):
     if error == "invalid_application_status":
         raise HTTPException(status_code=500, detail="Invalid application status")
     elif error == "invalid_scope":
         raise HTTPException(status_code=400, detail="Invalid scope")
     elif error == "access_denied":
         raise HTTPException(status_code=403, detail="User denied authorization")
-    
+
     return save_authorization_data_and_return_response(
         authorization_token, system_name="Kaiten"
     )
-    

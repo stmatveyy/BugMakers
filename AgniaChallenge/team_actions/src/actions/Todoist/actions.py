@@ -191,7 +191,10 @@ class Sections(BaseModel):
     description="Creates a new section",
 )
 def create_new_section(
-    id: Id, project_id: str, name: str, order: Optional[Annotated[int, Field(ge=1)]] = None
+    id: Id,
+    project_id: str,
+    name: str,
+    order: Optional[Annotated[int, Field(ge=1)]] = None,
 ) -> Sections:
     response = requests.post(
         "https://api.todoist.com/rest/v2/sections",

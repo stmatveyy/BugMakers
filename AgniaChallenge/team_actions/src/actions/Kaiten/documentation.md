@@ -36,7 +36,7 @@ class BoardColumn(BaseModel):
     col_count: int	
     type: Literal[1, 2, 3]
     board_id: int	 
-    column_id	null	
+    column_id: Id	
     external_id: Optional[str, None]
     rules: int
 
