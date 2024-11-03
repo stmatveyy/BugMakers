@@ -131,8 +131,6 @@ def create_space(title: SpaceTitle, external_id: Optional[Id] = None) -> Space:
 
     return get_res(res)
 
-    
-
 
 @register_action(
     system_type="task_tracker", include_in_plan=True,

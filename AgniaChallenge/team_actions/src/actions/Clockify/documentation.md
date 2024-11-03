@@ -251,3 +251,7 @@ Parameters:
 
 Returns:
 A time entry object (Time)
+
+## add_new_project
+
+Description: 

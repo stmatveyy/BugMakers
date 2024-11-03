@@ -20,9 +20,16 @@ systems_info: Dict[str, Any] = {
     
     },
     "time_tracker": {
-        "description" : "A rool for time-management, productivity and team work",
+        "description" : "A tool for time-management, productivity and team work",
         "systems": {
             "Clockify" : "Clockify is a time tracking service designed to help organizations track employee productivity, view their attendance and billable hours."
+        }
+    },
+    "ask_lama":{
+        "description": "A general-purpose service for generating text",
+        "systems":
+        {
+            "LAMA" : "LAMA is a AI model that generates text by prompt"
         }
     }
 }
