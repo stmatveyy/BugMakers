@@ -458,7 +458,7 @@ def create_workspace(
     description="Creates a new time",
 )
 def get_all_workspace(
-    roles: Optional[str]
+    roles: Optional[Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]]
 ) -> Workspace:
     response = requests.get(
         f"https://api.clockify.me/api/v1/workspaces",
@@ -471,19 +471,3 @@ def get_all_workspace(
     response.raise_for_status()
     data = response.json()
     return data
-
-
-def find_need_workspace(
-    workspaceName: str
-) -> Workspace:
-    response = requests.get(
-        f"https://api.clockify.me/api/v1/workspaces",
-        headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
-        json={
-            "workspaceId": workspaceName,
-        },
-    )
-    response.raise_for_status()
-    data = response.json()
-    return data[Workspace.id]
-

@@ -254,8 +254,6 @@ Parameters:
 Returns:
 A time entry object (Time)
 
-<<<<<<< HEAD
-=======
 ## add_new_project
 
 Description: 
@@ -292,7 +290,6 @@ Parameters:
 Returns:
 A Workspace object
 
->>>>>>> 517dfa5fade75fa81c4ddeef04e567ebd0f1626f
 ## get_all_workspace
 
 Description:
