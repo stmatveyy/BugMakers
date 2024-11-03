@@ -326,26 +326,27 @@ def get_specific_time_entry(
     data = response.json()
     return data
 
+
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
     signature="(workspaceId: str, billable: Optional[bool] = None, clientId: Optional[str] = None, color: Optional[Annotated[str, Field(pattern=r'^#(?:[0-9a-fA-F]{6}){1}$')]] = None, costRate: Optional[List] = None, estimate: Optional[List] = None, hourlyRate: Optional[List] = None, isPublic: Optional[bool] = None, mamberships: Optional[List] = None, name: Annotatad[str, Field(ge=2, le=250)], note: Optional[Annotated[str, Field(le=1684)]], tasks: Optional[List] = None) -> Time",
     arguments=["workspaceId", "id", "hydrated"],
     description="Creates a new time",
-) 
+)
 def add_new_project(
     workspaceId: str,
     name: Annotated[str, Field(ge=2, le=250)],
-    note: Optional[Annotated[str, Field(le=1684)]] = None, 
+    note: Optional[Annotated[str, Field(le=1684)]] = None,
     billable: Optional[bool] = None,
     clientId: Optional[str] = None,
-    color: Optional[Annotated[str, Field(pattern="^#(?:[0-9a-fA-F]{6}){1}$")]] = None, 
-    costRate: Optional[List] = None, 
-    estimate: Optional[List] = None, 
-    hourlyRate: Optional[List] = None, 
-    isPublic: Optional[bool] = None, 
-    mamberships: Optional[List] = None, 
-    tasks: Optional[List] = None
+    color: Optional[Annotated[str, Field(pattern="^#(?:[0-9a-fA-F]{6}){1}$")]] = None,
+    costRate: Optional[List] = None,
+    estimate: Optional[List] = None,
+    hourlyRate: Optional[List] = None,
+    isPublic: Optional[bool] = None,
+    mamberships: Optional[List] = None,
+    tasks: Optional[List] = None,
 ) -> Time:
     response = requests.post(
         f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/projects",
