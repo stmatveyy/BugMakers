@@ -16,7 +16,6 @@ class Space(BaseModel):
     title: SpaceTitle
     created: Date
     updated: Date
-    external_id: Optional[str, None]
     description: SpaceDescription
 
 class Board(BaseModel):
@@ -24,7 +23,6 @@ class Board(BaseModel):
     title: BoardTitle
     created: Date
     updated: Date
-    external_id: Optional[str, None]
     description: BoardDescription
     columns: list[BoardColumn]
     lanes: list[BoardLanes]
