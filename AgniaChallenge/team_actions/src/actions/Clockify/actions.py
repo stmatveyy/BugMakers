@@ -270,23 +270,20 @@ def create_new_time_entry(
     data = response.json()
     return data
 
+
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
     signature="(workspaceId: str, page: Annotated[int, Field(ge=1)], page_size: Annotated[int, Field(ge=1, le=1000, default=10)]) -> Time",
-    arguments=[
-        "workspaceId",
-        "page",
-        "page_size"
-    ],
+    arguments=["workspaceId", "page", "page_size"],
     description="Creates a new time",
 )
 def get_all_progress_time(
-    workspaceId: str, 
-    page: Optional[Annotated[int, Field(ge=1)]], 
-    page_size: Optional[Annotated[int, Field(ge=1, le=1000, default=10)]]
-) -> Time:
-    # Получение итогового времени работы над проектом
+    workspaceId: str,
+    page: Optional[Annotated[int, Field(ge=1)]],
+    page_size: Optional[Annotated[int, Field(ge=1, le=1000, default=10)]],
+) -> List[Time]:
+    # Получение всех временных отрезков
     response = requests.get(
         f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries/status/in-progress",
         headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
@@ -301,21 +298,18 @@ def get_all_progress_time(
     data = response.json()
     return data
 
+
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
     signature="(workspaceId: str, id: Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')], hydrated: Optional[str] = None) -> Time",
-    arguments=[
-        "workspaceId",
-        "id",
-        "hydrated"
-    ],
+    arguments=["workspaceId", "id", "hydrated"],
     description="Creates a new time",
 )
 def get_specific_time_entry(
-    workspaceId: str, 
-    id: Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')], 
-    hydrated: Optional[str] = None
+    workspaceId: str,
+    id: Annotated[str, Field(example="64c777ddd3fcab07cfbb210c")],
+    hydrated: Optional[str] = None,
 ) -> Time:
     # Получение итогового времени работы над проектом ver.2
     response = requests.get(
@@ -325,6 +319,50 @@ def get_specific_time_entry(
             "workspaceId": workspaceId,
             "id": id,
             "hydrated": hydrated,
+        },
+    )
+
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+@register_action(
+    system_type="time_tracker",
+    include_in_plan=True,  # Действие может быть использовано в плане
+    signature="(workspaceId: str, billable: Optional[bool] = None, clientId: Optional[str] = None, color: Optional[Annotated[str, Field(pattern=r'^#(?:[0-9a-fA-F]{6}){1}$')]] = None, costRate: Optional[List] = None, estimate: Optional[List] = None, hourlyRate: Optional[List] = None, isPublic: Optional[bool] = None, mamberships: Optional[List] = None, name: Annotatad[str, Field(ge=2, le=250)], note: Optional[Annotated[str, Field(le=1684)]], tasks: Optional[List] = None) -> Time",
+    arguments=["workspaceId", "id", "hydrated"],
+    description="Creates a new time",
+) 
+def add_new_project(
+    workspaceId: str,
+    name: Annotated[str, Field(ge=2, le=250)],
+    note: Optional[Annotated[str, Field(le=1684)]] = None, 
+    billable: Optional[bool] = None,
+    clientId: Optional[str] = None,
+    color: Optional[Annotated[str, Field(pattern="^#(?:[0-9a-fA-F]{6}){1}$")]] = None, 
+    costRate: Optional[List] = None, 
+    estimate: Optional[List] = None, 
+    hourlyRate: Optional[List] = None, 
+    isPublic: Optional[bool] = None, 
+    mamberships: Optional[List] = None, 
+    tasks: Optional[List] = None
+) -> Time:
+    response = requests.post(
+        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/projects",
+        headers={"Authorization": f"Bearer {authorization_data['Clockify']}"},
+        json={
+            "workspaceId": workspaceId,
+            "name": name,
+            "note": note,
+            "billable": billable,
+            "clientId": clientId,
+            "color": color,
+            "costRate": costRate,
+            "estimate": estimate,
+            "hourlyRate": hourlyRate,
+            "isPublic": isPublic,
+            "mamberships": mamberships,
+            "tasks": tasks,
         },
     )
 
