@@ -1,6 +1,7 @@
 import requests
 from typing import Annotated, Optional, List, Literal
 from pydantic import BaseModel, Field
+from datetime import datetime, timedelta
 
 from team_actions.src.registration import register_action
 
@@ -10,11 +11,12 @@ def workspaceToId(auth_data, workspaceName):
         f"https://api.clockify.me/api/v1/workspaces",
         headers={"X-Api-Key": f"{auth_data['Clockify']}"},
     )
-
-    needed_workspace = [sp for sp in response.json() if sp["name"] == workspaceName][0]
-
+    try:
+        needed_workspace = [sp for sp in response.json() if sp["name"] == workspaceName][0]
+    except IndexError as e:
+        return (e, None)
     needed_ws_id = needed_workspace["id"]
-    return needed_ws_id
+    return (None, needed_ws_id)
 
 
 def getLoggedUserId(auth_data):
@@ -440,9 +442,10 @@ def get_time_entries_for_user(
     get_week_before: Optional[str] = None,
 ) -> List[Time]:
 
-    workspaceId = workspaceToId(
+    err, workspaceId = workspaceToId(
         auth_data=authorization_data, workspaceName=workspaceName
     )
+    if err: return err
     userId = getLoggedUserId(auth_data=authorization_data)
 
     response = requests.get(
@@ -467,12 +470,20 @@ def get_time_entries_for_user(
 
     response.raise_for_status()
     data = response.json()
-    return data
+    res = []
+    for obj in data:
+        diff = (datetime.fromisoformat(obj["end"]) - datetime.fromisoformat(obj["start"])).total_seconds()
+        hh = f"{diff // 3600}:"
+        mm = f"{(diff  % 3600) // 60}:"
+        ss = f"{round(diff % 60)}"
+        h_str = hh+mm+ss
+        res.append({"Project name": obj["description"], "Time spent": h_str})
+    return res
 
 
 @register_action(
     system_type="time_tracker",
-    include_in_plan=True,  # Действие может быть использовано в плане
+    include_in_plan=True,  
     signature="(cakeOrganizationId: Optional[str] = None, name: Annotated[str, Field(ge=2, le=250)], organizationId: Optional[str] = None) -> Workspace",
     arguments=["cakeOrganizationId", "name", "organizationId"],
     description="Creates a new time",
