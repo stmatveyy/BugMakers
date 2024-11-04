@@ -18,15 +18,14 @@ URL = "https://matvey-22.kaiten.ru/api/latest"
 
 
 def get_res(res):
-
     res.raise_for_status()
     data = res.json()
     return data
 
+
 def SpaceNameToId(auth, spaceName):
     spaces = rq.get(
-        URL+'/spaces',
-        headers={"Authorization": f"Bearer {auth['Kaiten']}"}
+        URL + "/spaces", headers={"Authorization": f"Bearer {auth['Kaiten']}"}
     ).json()
 
     try:
@@ -34,8 +33,9 @@ def SpaceNameToId(auth, spaceName):
 
     except IndexError:
         return ({"reason": "Space not found"}, None)
-    
+
     return (None, sp_id)
+
 
 class Space(BaseModel):
 
@@ -130,8 +130,10 @@ class Board(BaseModel):
     columns: list[BoardColumn]
     lanes: list[BoardLanes]
 
+
 class Lane(BaseModel):
     title: str
+
 
 @register_action(
     system_type="task_tracker",
@@ -143,7 +145,7 @@ class Lane(BaseModel):
 def create_space(title: SpaceTitle) -> Space:
 
     res = rq.post(
-        URL+'/spaces',
+        URL + "/spaces",
         headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
         json={"title": title},
     )
@@ -152,38 +154,42 @@ def create_space(title: SpaceTitle) -> Space:
 
 
 @register_action(
-    system_type="task_tracker", 
+    system_type="task_tracker",
     include_in_plan=True,
     signature="(spaceName: str, title: str | int, columns: list[Column], \
                 lanes: list[Lane], description: Optional[str]) -> Board",
-    arguments=[
-        "title", "columns",
-        "lanes", "description", "spaceName"
-    ],
-    description="Create new Board object"
+    arguments=["title", "columns", "lanes", "description", "spaceName"],
+    description="Create new Board object",
 )
-def create_board(spaceName: str, title: Optional[str | int], columns: List[Column],
-                 lanes: List[Lane], description: Optional[Optional[str]]) -> Board:
-    
+def create_board(
+    spaceName: str,
+    title: Optional[str | int],
+    columns: List[Column],
+    lanes: List[Lane],
+    description: Optional[Optional[str]],
+) -> Board:
+
     err, space_id = SpaceNameToId(auth=authorization_data, spaceName=spaceName)
-    
+
     if err is not None:
         return err
-     
+
     res = rq.post(
         URL + f"/spaces/{space_id}/boards",
         headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
-        json={            
+        json={
             "title": title,
             "columns": columns,
             "lanes": lanes,
-            "top": 0, 
+            "top": 0,
             "left": 1168,
-            "description": description
-        }
+            "description": description,
+        },
     )
 
-    return get_res(res)
+    res.raise_for_status()
+    data = res.json()
+    return data
 
 
 @register_action(
@@ -198,10 +204,10 @@ def get_boards_list(spaceName: str) -> List[Board]:
 
     if err:
         return err
-    
+
     res = rq.get(
         URL + f"/spaces/{space_id}/boards",
-        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"}
+        headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
     )
 
     return get_res(res)
@@ -210,10 +216,7 @@ def get_boards_list(spaceName: str) -> List[Board]:
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    arguments=["board_id",
-                "title",
-                "sort_order",
-                "type"],
+    arguments=["board_id", "title", "sort_order", "type"],
     signature="(board_id: int, title: str, \
                 sort_order: Optional[int], type: Literal[0, 1, 3]) -> BoardColumn",
     description="Create Column object",
@@ -225,11 +228,7 @@ def create_column(
     res = rq.post(
         URL + f"/boards/{board_id}/columns",
         headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
-        json={
-            "title": title,
-            "sort_order": sort_order,
-            "type": type
-        }
+        json={"title": title, "sort_order": sort_order, "type": type},
     )
 
     return get_res(res)

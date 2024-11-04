@@ -71,6 +71,7 @@ def push_AGNIA_token(authorization_token: str, error: str = None):
         authorization_token, system_name="AGNIA"
     )
 
+
 @app.post("/Clockify/push-token")
 def push_Clockify_token(authorization_token: str, error: str = None):
     if error == "invalid_application_status":
