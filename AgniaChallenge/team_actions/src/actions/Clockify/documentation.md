@@ -1,6 +1,6 @@
 # TypeHints Definition
 Page = Annotated[str, default="1"]
-
+WorkspaceName = Annotated[str, description="A name for a workspace"]
 
 # Models definition
 
@@ -10,11 +10,8 @@ class User(BaseModel):
 
 
 class Workspace(BaseModel):
-    workspaceName: str,
+    workspaceName: WorkspaceName,
     id: Optional[str]
-    roles: Optional[
-        Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]
-    ]
 
 
 class Webhooks(BaseModel):
@@ -203,11 +200,11 @@ class Time(BaseModel):
 # API Calls Documentation
 ## create_new_time_entry
 Description: 
+
 Creates a new time entry for the user to track time from the beginning of work
 
 Parameters:
-- workspaceName(str): Name of the workspace
-- workspaceId(str): Id of the workspace
+- workspaceName(WorkspaceName): Name of the workspace
 - billable(bool): Whether the time entry is billable of not
 - description(Annotated[str, Field(ge=1, le=3000)]): Represents time entry description.
 - end(Annotated[
@@ -228,29 +225,16 @@ Returns:
 - created time entry (Time)
 
 
-## get_all_progress_time
-
-Description:
-Get all active time entries for workspace
-
-Parameters:
-- workspaceId(str): Id of the workspace
-- page(Optional[Annotated[int, Field(ge=1)]]): A page
-- page_size(Optional[Annotated[int, Field(ge=1, le=1000, default=10)]]): A page_size
-
-Returns:
-- A list of time (List[Time]) entries that are active
-
 ## get_specific_time_entry
 
 Description:
-Get a specific time entry by its id
+Get a specific time entry by its description
 
 
 Parameters:
 
 - workspaceId(str): Id of a workspace
-- id(Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')]): Id of the time entry, e.g. 64c777ddd3fcab07cfbb210c
+- timeEntryDescription(str): Description of time entry
 - hydrated(Optional[str]): Flag to set whether to include additional information of a time entry or not.
 
 Returns:
@@ -262,14 +246,17 @@ Description:
 Adds new project
 
 Parameters:
-- workspaceId(str): An Id of a workspace
+- workspaceName(WorkspaceName): A name of a workspace
 - name(Annotated[str, Field(ge=2, le=250)]): A name for the project
 - billable(Optional[bool]): Whether the project is billable or not
+
+Returns:
+Project object
 
 ## get_time_entries_for_user
 
 Description:
-Get user-specific time entries
+Get all time entries for certain user
 
 Parameters:
 - workspaceId(str): Id of the workspace
@@ -295,10 +282,9 @@ A Workspace object
 ## get_all_workspace
 
 Description:
-Gives all workspaces for a specific role
+Gets all workspaces for user
 
 Parameters:
-- roles(Optional[str]): Role of a project member
 
 Returns:
-Return Workspace object
+A Workspace object

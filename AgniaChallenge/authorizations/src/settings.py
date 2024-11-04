@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class BaseHackathonSettings(BaseSettings):
     user_token_from_tg_bot: str = (
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjExNDJlNjMtMjFjNS00MTY3LWEzMWQtM2M1Yjk2NzIzNTlhIiwiZXhwIjoxNzMwNjY5NjYxLjk3NzY4OCwiaXNzIjoiYmFja2VuZDphY2Nlc3MtdG9rZW4ifQ.ygi6RJmf92QdKtZxnCw_6ChCo6M1wCF9w5R9EgTQWX0"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjExNDJlNjMtMjFjNS00MTY3LWEzMWQtM2M1Yjk2NzIzNTlhIiwiZXhwIjoxNzMwNzU2ODgyLjkxMTUyNSwiaXNzIjoiYmFja2VuZDphY2Nlc3MtdG9rZW4ifQ.xUXfoVybC-vxnDLkUO69ldwRDUyH0A5eX8gdGPoCKQ0"
     )
     save_auth_data_endpoint: str = (
         "https://aes-agniachallenge-case.olymp.innopolis.university/save-authorization-data"

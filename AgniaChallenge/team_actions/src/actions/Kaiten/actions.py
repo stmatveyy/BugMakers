@@ -14,7 +14,7 @@ BoardDescription = Annotated[str, Field(descripton="A brief board description")]
 SpaceDescription = Annotated[str, Field(descripton="A brief space description")]
 Date = Annotated[str, Field(description="A date when an entity was created")]
 
-URL = "https://ee3068316.kaiten.ru/api/latest"
+URL = "https://matvey-22.kaiten.ru/api/latest"
 
 
 def get_res(res):
@@ -23,6 +23,19 @@ def get_res(res):
     data = res.json()
     return data
 
+def SpaceNameToId(auth, spaceName):
+    spaces = rq.get(
+        URL+'/spaces',
+        headers={"Authorization": f"Bearer {auth['Kaiten']}"}
+    ).json()
+
+    try:
+        sp_id = [sp for sp in spaces if sp["title"] == spaceName][0]["id"]
+
+    except IndexError:
+        return ({"reason": "Space not found"}, None)
+    
+    return (None, sp_id)
 
 class Space(BaseModel):
 
@@ -139,18 +152,24 @@ def create_space(title: SpaceTitle) -> Space:
 
 
 @register_action(
-    system_type="task_tracker", include_in_plan=True,
-    signature="(space_id: int, title: str | int, columns: list[Column], \
+    system_type="task_tracker", 
+    include_in_plan=True,
+    signature="(spaceName: str, title: str | int, columns: list[Column], \
                 lanes: list[Lane], description: Optional[str]) -> Board",
     arguments=[
         "title", "columns",
-        "lanes", "description", "space_id"
+        "lanes", "description", "spaceName"
     ],
     description="Create new Board object"
 )
-def create_board(space_id: int, title: str | int, columns: list[Column],
-                lanes: list[Lane], description: Optional[str]) -> Board:
+def create_board(spaceName: str, title: Optional[str | int], columns: List[Column],
+                 lanes: List[Lane], description: Optional[Optional[str]]) -> Board:
     
+    err, space_id = SpaceNameToId(auth=authorization_data, spaceName=spaceName)
+    
+    if err is not None:
+        return err
+     
     res = rq.post(
         URL + f"/spaces/{space_id}/boards",
         headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"},
@@ -158,7 +177,9 @@ def create_board(space_id: int, title: str | int, columns: list[Column],
             "title": title,
             "columns": columns,
             "lanes": lanes,
-            "description": description,
+            "top": 0, 
+            "left": 1168,
+            "description": description
         }
     )
 
@@ -168,14 +189,18 @@ def create_board(space_id: int, title: str | int, columns: list[Column],
 @register_action(
     system_type="task_tracker",
     include_in_plan=True,
-    signature="(space_id: int) -> Board",
+    signature="(spaceName: str) -> Board",
     description="Get list of Boards",
-    arguments=["space_id"],
+    arguments=["spaceName"],
 )
-def get_bords_list(space_id: str) -> List[Board]:
+def get_boards_list(spaceName: str) -> List[Board]:
+    err, space_id = SpaceNameToId(auth=authorization_data, spaceName=spaceName)
 
+    if err:
+        return err
+    
     res = rq.get(
-        URL + f"/{space_id}",
+        URL + f"/spaces/{space_id}/boards",
         headers={"Authorization": f"Bearer {authorization_data['Kaiten']}"}
     )
 

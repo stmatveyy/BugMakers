@@ -5,6 +5,27 @@ from pydantic import BaseModel, Field
 from team_actions.src.registration import register_action
 
 
+def workspaceToId(auth_data, workspaceName):
+    response = requests.get(
+            f"https://api.clockify.me/api/v1/workspaces",
+            headers={"X-Api-Key": f"{auth_data['Clockify']}"},
+        )
+
+    needed_workspace = [sp for sp in response.json() if sp["name"] == workspaceName][0]
+
+    needed_ws_id = needed_workspace["id"]
+    return needed_ws_id
+
+def getLoggedUserId(auth_data):
+    response = requests.get(
+            f"https://api.clockify.me/api/v1/user",
+            headers={"X-Api-Key": f"{auth_data['Clockify']}"}
+        )
+
+    return response.json()["id"]
+
+
+
 authorization_data = {}
 # Держите это поле пустым изначально.
 # После регистрации действий в системе, сюда будут автоматически
@@ -23,9 +44,6 @@ class User(BaseModel):
 
 class Workspace(BaseModel):
     id: str
-    roles: Optional[
-        Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]
-    ]
 
 
 class Webhooks(BaseModel):
@@ -213,10 +231,9 @@ class Time(BaseModel):
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
-    signature="(workspaceName: str, workspaceId: str, billable: Optional[bool],description: Optional[Annotated[str, Field(ge=1, le=3000)]],end: Optional[Annotated[str, Field(description=\"Represents an end date in yyyy-MM-ddThh:mm:ssZ format\")]],projectId: Optional[str],start: Optional[Annotated[str,Field(description=\"Represents a start date in yyyy-MM-ddThh:mm:ssZ format.\"),]],tagIds: Optional[List[str]],taskId: Optional[str],type: Optional[Literal[\"REGULAR\", \"BREAK\"]],customAttributes: Optional[List[CustomAttribute]] = None,customField: Optional[List[CustomField]] = None,) -> Time",
+    signature="(workspaceName: str, billable: Optional[bool],description: Optional[Annotated[str, Field(ge=1, le=3000)]],end: Optional[Annotated[str, Field(description=\"Represents an end date in yyyy-MM-ddThh:mm:ssZ format\")]],projectId: Optional[str],start: Optional[Annotated[str,Field(description=\"Represents a start date in yyyy-MM-ddThh:mm:ssZ format.\"),]],tagIds: Optional[List[str]],taskId: Optional[str],type: Optional[Literal[\"REGULAR\", \"BREAK\"]],customAttributes: Optional[List[CustomAttribute]] = None,customField: Optional[List[CustomField]] = None,) -> Time",
     arguments=[
         "workspaceName",
-        "workspaceId",
         "billable",
         "customAttributes",
         "customField",
@@ -228,11 +245,10 @@ class Time(BaseModel):
         "taskId",
         "type",
     ],
-    description="Creates a new time",
+    description="Creates a new time entry",
 )
 def create_new_time_entry(
     workspaceName: str,
-    workspaceId: str,
     billable: Optional[bool],
     description: Optional[Annotated[str, Field(ge=1, le=3000)]],
     end: Optional[Annotated[
@@ -251,26 +267,13 @@ def create_new_time_entry(
 ) -> Time:
     # Логика вызова API Clockify для создания времени входа начало работы над проектом
 
-    response = requests.get(
-        f"https://api.clockify.me/api/v1/workspaces",
-        headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
-        json={
-            "roles": Optional[Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]],
-        },
-    )
-
-    needed_workspace = [sp for sp in response.json() if sp["name"] == workspaceName][0]
-
-    needed_ws_id = needed_workspace["id"]
-
-    response.raise_for_status()
-    data = response.json()
+    workspace_id = workspaceToId(auth_data=authorization_data, workspaceName=workspaceName)
 
     response = requests.post(
-        f"https://api.clockify.me/api/v1/workspaces/{needed_ws_id}/time-entries",
+        f"https://api.clockify.me/api/v1/workspaces/{workspace_id}/time-entries",
         headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
         json={
-            "workspaceId": workspaceId,
+            "workspaceId": workspace_id,
             "billable": billable,
             "description": description,
             "end": end,
@@ -292,52 +295,30 @@ def create_new_time_entry(
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
-    signature="(workspaceId: str, page: Optional[Annotated[int, Field(ge=1)]], page_size: Optional[Annotated[int, Field(ge=1, le=1000, default=10)]]) -> List[Time]",
-    arguments=["workspaceId", "page", "page_size"],
-    description="Creates a new time",
-)
-def get_all_progress_time(
-    workspaceId: str,
-    page: Optional[Annotated[int, Field(ge=1)]],
-    page_size: Optional[Annotated[int, Field(ge=1, le=1000, default=10)]],
-) -> List[Time]:
-    # Получение всех временных отрезков
-    response = requests.get(
-        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries/status/in-progress",
-        headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
-        json={
-            "workspaceId": workspaceId,
-            "page": page,
-            "page_size": page_size,
-        },
-    )
-
-    response.raise_for_status()
-    data = response.json()
-    return data
-
-
-@register_action(
-    system_type="time_tracker",
-    include_in_plan=True,  # Действие может быть использовано в плане
-    signature="(workspaceId: str, id: Annotated[str, Field(example='64c777ddd3fcab07cfbb210c')], hydrated: Optional[str] = None) -> Time",
-    arguments=["workspaceId", "id", "hydrated"],
-    description="Creates a new time",
+    signature="(workspaceName: str, timeEntryDescription: str, hydrated: Optional[str] = None) -> Time",
+    arguments=["workspaceName", "timeEntryDescription", "hydrated"],
+    description="Gets a specific time entry by id",
 )
 def get_specific_time_entry(
-    workspaceId: str,
-    id: Annotated[str, Field(example="64c777ddd3fcab07cfbb210c")],
-    hydrated: Optional[str] = None,
+    workspaceName: str,
+    timeEntryDescription: str,
+    hydrated: Optional[str] = None
 ) -> Time:
-    # Получение итогового времени работы над проектом ver.2
+
+    workspaceID = workspaceToId(auth_data=authorization_data, workspaceName=workspaceName)
+    userId = getLoggedUserId(auth_data=authorization_data)
+
+    timeEntries = requests.get(f"https://api.clockify.me/api/v1/workspaces/{workspaceID}/user/{userId}/time-entries",
+                               headers={"X-Api-Key": f"{authorization_data['Clockify']}"}).json()
+    
+    try:
+        timeEntryId = [t_e for t_e in timeEntries if t_e["description"] == timeEntryDescription][0]["id"]
+    except IndexError:
+        return {"reason": "No time entry found"}
+
     response = requests.get(
-        f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/time-entries/{id}",
-        headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
-        json={
-            "workspaceId": workspaceId,
-            "id": id,
-            "hydrated": hydrated,
-        },
+        f"https://api.clockify.me/api/v1/workspaces/{workspaceID}/time-entries/{timeEntryId}",
+        headers={"X-Api-Key": f"{authorization_data['Clockify']}"}
     )
 
     response.raise_for_status()
@@ -348,12 +329,12 @@ def get_specific_time_entry(
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
-    signature="(workspaceId: str, billable: Optional[bool] = None, clientId: Optional[str] = None, color: Optional[Annotated[str, Field(pattern=r'^#(?:[0-9a-fA-F]{6}){1}$')]] = None, costRate: Optional[List] = None, estimate: Optional[List] = None, hourlyRate: Optional[List] = None, isPublic: Optional[bool] = None, memberships: Optional[List] = None, name: Annotatad[str, Field(ge=2, le=250)], note: Optional[Annotated[str, Field(le=1684)]], tasks: Optional[List] = None) -> Project",
-    arguments=["workspaceId", "billable", "clientId", "note", "name", "color", "costRate", "estimate", "hourlyRate", "isPublic", "memberships", "tasks"],
+    signature="(workspaceName:str, billable: Optional[bool] = None, clientId: Optional[str] = None, color: Optional[Annotated[str, Field(pattern=r'^#(?:[0-9a-fA-F]{6}){1}$')]] = None, costRate: Optional[List] = None, estimate: Optional[List] = None, hourlyRate: Optional[List] = None, isPublic: Optional[bool] = None, memberships: Optional[List] = None, name: Annotatad[str, Field(ge=2, le=250)], note: Optional[Annotated[str, Field(le=1684)]], tasks: Optional[List] = None) -> Project",
+    arguments=["workspaceName", "billable", "clientId", "note", "name", "color", "costRate", "estimate", "hourlyRate", "isPublic", "memberships", "tasks"],
     description="Creates a new time",
 )
 def add_new_project(
-    workspaceId: str,
+    workspaceName: str,
     name: Annotated[str, Field(ge=2, le=250)],
     note: Optional[Annotated[str, Field(le=1684)]] = None,
     billable: Optional[bool] = None,
@@ -366,6 +347,8 @@ def add_new_project(
     memberships: Optional[List] = None,
     tasks: Optional[List] = None,
 ) -> Project:
+    
+    workspaceId = workspaceToId(auth_data=authorization_data, workspaceName=workspaceName)
     response = requests.post(
         f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/projects",
         headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
@@ -393,13 +376,13 @@ def add_new_project(
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  
-    signature="(workspaceId: str, userId: Annotated[str, Field(example='5a0ab5acb07987125438b60f')], description: Optional[str] = None, start: Optional[Annotated[str, Field(example='start=2020-01-01T00:00:00Z')]] = None, end: Optional[Annotated[str, Field(example='end=2021-01-01T00:00:00Z')]] = None, project: Optional[str] = None, task: Optional[str] = None, tags: Optional[str] = None, project_required: Optional[str] = None, task_required: Optional[str] = None, hydrated: Optional[str] = None, page: Optional[Annotated[str, Field(default='1')]] = None, page_size: Optional[Annotated[str, Field(default='50')]] = None, in_progress: Optional[bool] = None, get_week_before = Optional[str] = None) -> List[Time]",
-    arguments=["workspaceId", "userId", "description", "start", "end", "project", "task", "tags", "project_required", "task_required",  "hydrated", "page", "page_size", "in_progress", "get_week_before"],
+    signature="(workspaceName: str, description: Optional[str] = None, start: Optional[Annotated[str, Field(example='start=2020-01-01T00:00:00Z')]] = None, end: Optional[Annotated[str, Field(example='end=2021-01-01T00:00:00Z')]] = None, project: Optional[str] = None, task: Optional[str] = None, tags: Optional[str] = None, project_required: Optional[str] = None, task_required: Optional[str] = None, hydrated: Optional[str] = None, page: Optional[Annotated[str, Field(default='1')]] = None, page_size: Optional[Annotated[str, Field(default='50')]] = None, in_progress: Optional[bool] = None, get_week_before = Optional[str] = None) -> List[Time]",
+    arguments=["workspaceName", "description", "start", "end", "project", "task", "tags", "project_required", "task_required",  "hydrated", "page", "page_size", "in_progress", "get_week_before"],
     description="Creates a new time",
 )
+
 def get_time_entries_for_user(
-    workspaceId: str, 
-    userId: Annotated[str, Field(example='5a0ab5acb07987125438b60f')], 
+    workspaceName: str, 
     description: Optional[str] = None, 
     start: Optional[Annotated[str, Field(example='start=2020-01-01T00:00:00Z')]] = None, 
     end: Optional[Annotated[str, Field(example='end=2021-01-01T00:00:00Z')]] = None, 
@@ -414,11 +397,14 @@ def get_time_entries_for_user(
     in_progress: Optional[bool] = None, 
     get_week_before: Optional[str] = None
     ) -> List[Time]:
+
+    workspaceId = workspaceToId(auth_data=authorization_data, workspaceName=workspaceName)
+    userId = getLoggedUserId(auth_data=authorization_data)
+    
     response = requests.get(
         f"https://api.clockify.me/api/v1/workspaces/{workspaceId}/user/{userId}/time-entries",
         headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
         json={
-            "workspaceId": workspaceId,
             "description": description,
             "start": start,
             "end": end,
@@ -469,19 +455,14 @@ def create_workspace(
 @register_action(
     system_type="time_tracker",
     include_in_plan=True,  # Действие может быть использовано в плане
-    signature="(roles: Optional[str]) -> Workspace",
-    arguments=["roles"],
+    signature="() -> Workspace",
+    arguments=[],
     description="Creates a new time",
 )
-def get_all_workspace(
-    roles: Optional[Literal["WORKSPACE_ADMIN", "OWNER", "TEAM_MANAGER", "PROJECT_MANAGER"]]
-) -> Workspace:
+def get_all_workspace() -> Workspace:
     response = requests.get(
         f"https://api.clockify.me/api/v1/workspaces",
         headers={"X-Api-Key": f"{authorization_data['Clockify']}"},
-        json={
-            "roles": roles,
-        },
     )
 
     response.raise_for_status()

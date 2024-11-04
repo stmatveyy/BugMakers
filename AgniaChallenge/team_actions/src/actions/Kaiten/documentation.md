@@ -102,6 +102,9 @@ class Card(BaseModel):
     public: bool
     cardRole: int
 
+class Lane(BaseModel):
+    title: str
+    type: Literal[1,2,3]
 # API Calls Documentation
 
 ## create_space
@@ -119,22 +122,22 @@ New Space object
 
 ## create_board
 Description:
-Creates a new board
+
+Creates a new board in given space by its spaceName
 
 Parameters: 
 
-- space_id(int): Spase Id
-- title(str): Board title
-- columns(list[Columns]): Board columns
-- lanes(list): Board lanes
+- spaceName(str): Space name
+- title(Optional[str]): Board title
+- columns(List[Column]): Board columns
+- lanes(List[Lane]): Board lanes
 - description(str): Board description
-- external_id(Optional[int | str]): Any external id you want to assign to board
 
 Returns: 
 A Board object
 
 
-## get_bords_list
+## get_boards_list
 Description:
 Get a list of boards
 
