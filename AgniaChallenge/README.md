@@ -1,12 +1,12 @@
 ## Регистрация и запуск действий
 --- 
-Чтобы зарегистрировать и запустить действия, нужно выполнить следуюущую команду из корня проекта:
+Чтобы зарегистрировать и запустить действия, нужно выполнить следующую команду из корня проекта:
 `python -m team_actions.src.initial_setup`
-После этого в консоли должно появиться сообщение об успешном запуске
+После этого в консоли должно появиться сообщение об успешном запуске.
 
 ## Запуск сервиса авторизаций
 --- 
-Чтобы запустить сервис, сначала необходимо указать настройки для авторизации.
+Чтобы запустить сервис, необходимо указать настройки для авторизации.
 
 
 В файле _src/settings_, в user_token_from_tg_bot, укажите токен пользователя, полученный в Telegram-боте при команде `/info`
@@ -23,11 +23,11 @@
 --- 
 (Добавление токенов авторизации в authorization_data)
 
-- Agnia: `POST` `http://127.0.0.1//AGNIA/push-token?authorization_token=<токен>` (токеном является)
+- Agnia: `POST` `http://127.0.0.1//AGNIA/push-token?authorization_token=b051d03a-817d-4489-b198-f6b154a4c65f` без login
 
-- Clockify: `POST` `http://127.0.0.1//Clockify/push-token?authorization_token=<токен>`
+- Clockify: `POST` `http://127.0.0.1//Clockify/push-token?authorization_token=YTRmMzc2MDAtYjRkNi00ZDI5LTgyYjktMDA3YWQzNzE2YzA1` login: sfs_stepan@mail.ru
 
-- Kaiten: `POST` `http://127.0.0.1//Kaiten/push-token?authorization_token=<токен>`
+- Kaiten: `POST` `http://127.0.0.1//Kaiten/push-token?authorization_token=2adf6abb-5aff-4202-9065-74fbb9ddbef1` login: matvey-22
 
 ## Добавленные/расширенные интеграции 
 ---
